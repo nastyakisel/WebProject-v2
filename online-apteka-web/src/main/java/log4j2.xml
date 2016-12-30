@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration status="error">
+	  <appenders>
+			<file name="log" fileName="C:\\temp\\log_file.log">
+			  <patternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+			</file>
+			<console name="STDOUT" target="SYSTEM_OUT">
+			  <patternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+			</console>
+	  </appenders>
+	  <loggers>
+			<root level="trace">
+			  <appender-ref ref="STDOUT"/>
+			  <appender-ref ref="log"/>
+			</root>
+	  </loggers>
+ 
+    </configuration>

@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.finalproject</groupId>
+    <artifactId>online-apteka</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <groupId>com.finalproject</groupId>
+  <artifactId>online-apteka-web</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <name>online-apteka-web Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+  		<dependency>
+    		<groupId>javax.servlet</groupId>
+    		<artifactId>javax.servlet-api</artifactId>
+    		<version>4.0.0-b01</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>jstl</groupId>
+    		<artifactId>jstl</artifactId>
+    		<version>1.2</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-api</artifactId>
+    		<version>2.7</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.apache.logging.log4j</groupId>
+    		<artifactId>log4j-core</artifactId>
+    		<version>2.7</version>
+		</dependency>
+
+        
+		<dependency>
+    		<groupId>com.finalproject</groupId>
+    		<artifactId>online-apteka-bean</artifactId>
+    		<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>com.finalproject</groupId>
+    		<artifactId>online-apteka-service</artifactId>
+    		<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>com.finalproject</groupId>
+    		<artifactId>online-apteka-dao-jdbc</artifactId>
+    		<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+  </dependencies>
+  <build>
+    <finalName>online-apteka-web</finalName>
+  </build>
+</project>

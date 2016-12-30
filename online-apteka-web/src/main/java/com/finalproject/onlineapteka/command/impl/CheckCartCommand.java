@@ -1,0 +1,104 @@
+package com.finalproject.onlineapteka.command.impl;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.finalproject.onlineapteka.bean.Cart;
+import com.finalproject.onlineapteka.bean.Drug;
+import com.finalproject.onlineapteka.command.Command;
+import com.finalproject.onlineapteka.service.GoodsService;
+import com.finalproject.onlineapteka.service.exception.ServiceException;
+import com.finalproject.onlineapteka.service.factory.ServiceFactory;
+
+public class CheckCartCommand implements Command {
+	private static final Logger logger = LogManager
+			.getLogger(AddGoodtoCartCommand.class.getName());
+
+	public void execute(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		GoodsService goodService = (GoodsService) ServiceFactory.getInstance()
+				.getGoodsService();
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		List<Drug> shoppingCart = (List<Drug>) session
+				.getAttribute("shoppingCart");
+
+		String count = request.getParameter("count");
+		String delete = request.getParameter("delete");
+		String buy = request.getParameter("buy");
+		String[] drugId = request.getParameterValues("drugId");
+		String[] drugQuantity = request.getParameterValues("quantity");
+		String[] drugsToDelete = request.getParameterValues("checkbox");
+		//Map<String, Float> mapQuantity = new HashMap<>();
+		//mapQuantity.put(drugId[k], Float.valueOf(drugQuantity[k]));
+
+		if (count != null) {
+			if (userId != null) {
+				for (int k = 0; k < drugId.length; k++) {
+					Cart cart = new Cart();
+					cart.setQuantity(Float.valueOf(drugQuantity[k]));
+					cart.setDrugId(Integer.parseInt(drugId[k]));
+					cart.setUserId(userId);
+					try {
+						goodService.changeCart(cart);
+						shoppingCart = goodService.getDrugsFromCart(userId);
+					} catch (ServiceException e) {
+						logger.error("Failed updating the cart", e);
+					}
+				}
+			} //if (userId != null)
+			else {
+				for (int j = 0; j < shoppingCart.size(); j++) {
+					for (int i = 0; i < drugId.length; i++) {
+						if(shoppingCart.get(j).getId() == Integer.parseInt(drugId[i])) {
+							shoppingCart.get(j).setQuantity(Float.valueOf(drugQuantity[i]));
+						}
+					}
+				}
+			}
+			response.sendRedirect("cart.jsp");
+		} //if (count != null)
+
+		if (delete != null) {
+			if (userId == null) {
+
+				for (int i = 0; i < drugsToDelete.length; i++) {
+					for (int j = 0; j < shoppingCart.size(); j++) {
+						if (Integer.parseInt(drugsToDelete[i]) == shoppingCart
+								.get(j).getId()) {
+							shoppingCart.remove(j);
+						}
+					}
+				}
+			} // if (userId == null)
+			else {
+
+				for (int i = 0; i < drugsToDelete.length; i++) {
+					try {
+						goodService.removeDrugFromCart(
+								Integer.parseInt(drugsToDelete[i]), userId);
+						shoppingCart = goodService.getDrugsFromCart(userId);
+					} catch (NumberFormatException | ServiceException e) {
+						logger.error("Failed delete from cart", e);
+					}
+				}
+				session.setAttribute("shoppingCart", shoppingCart);
+			} // else
+			response.sendRedirect("cart.jsp");
+		} // if (delete != null)
+
+		if (buy != null) {
+
+		}
+	}
+}
