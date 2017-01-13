@@ -30,6 +30,7 @@
                <c:choose>
                	<c:when test="${sessionScope.userId != null}">
  					<a href = "controller.html?action=logout" type="submit"><fmt:message key="loginOut.Out" bundle="${msgs}" /></a>	
+ 					<a href = "controller.html?action=getOrders" type="submit">Заказы</a>
  						</c:when>
  				<c:when test="${sessionScope.userId == null}">	
                		<a href = "javascript:void(0)" onclick = "document.getElementById('envelope').style.display='block';document.getElementById('fade').style.display='block'"><fmt:message key="startPage.registration" bundle="${msgs}" /></a>
@@ -88,6 +89,7 @@
    	<h2></h2><c:out value="${session_Id}" /></h2>
    	
    	<form method="post" action="controller.html" >
+   	<c:set var="sumTotal" value="${0}" />
    	<c:forEach items="${sessionScope.shoppingCart}" var="drug">
      	<tr>
      		<input type="hidden" name="action" value="checkCart" />
@@ -98,14 +100,22 @@
   			<font size="3px"><c:out value="${drug.description}" />
   			<input type="hidden" name="drugId" value="${drug.id}" />
   			<td><input type="text" name ="quantity" value = "${drug.quantity}"/></td>
-  			<td><c:out value="${drug.price}" /></td>
+  			<td><c:out value="${drug.price * drug.quantity}" /></td>
    		</tr>
+   		<c:set var="sumTotal" value="${sumTotal + drug.price * drug.quantity}" />
    		</c:forEach>
+   		<tr> <td></td><td></td>
+   		<td><h2>Итого</h2></td>
+   		<td></td><
+   		<td><h2><c:out value="${sumTotal}" /></h2>
+   		</td>
+   		</tr>	
   	<tr><input type="submit" name="count" value="Пересчитать" /></tr>
   	<tr><input type="submit" name="delete" value="Удалить" /></tr>
   	<tr><input type="submit" name="buy" value="Оформить заказ" /></tr>
-   	</form>
    	</table>
+   	</form>
+   
  <br>
  <br>
     </div>

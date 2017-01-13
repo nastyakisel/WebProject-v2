@@ -10,9 +10,18 @@ public class Drug {
 	private String instruction;
 	private BigDecimal price;
 	private Float quantity;
+	public Integer getRecipeId() {
+		return recipeId;
+	}
+
+	public void setRecipeId(Integer recipeId) {
+		this.recipeId = recipeId;
+	}
+
 	private Integer needRecipe;
 	private String imagePath;
 	private Integer categoryId;
+	private Integer recipeId;
 
 	public String getInstruction() {
 		return instruction;

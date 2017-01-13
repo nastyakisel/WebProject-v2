@@ -21,4 +21,15 @@ public class CategoryServiceImpl implements CategoryService{
 		}
 		return categoryList;
 	}
+	@Override
+	public List<Category> getAllCategories(String locale) throws ServiceException {
+		CategoryDao categoryDao = DAOFactoryImpl.getInstance().getCategoryDao();
+		List<Category> categoryList = null;
+		try {
+			categoryList = categoryDao.loadAllCategories(locale);
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
+		return categoryList;
+	}
 }

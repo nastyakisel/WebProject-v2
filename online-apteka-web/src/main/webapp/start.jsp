@@ -22,6 +22,13 @@
    	<div class="name">
    		<a href = "controller.html?action=ru"><fmt:message key="startPage.ruLocale" bundle="${msgs}" /></a>
 		<a href = "controller.html?action=en"><fmt:message key="startPage.enLocale" bundle="${msgs}" /></a>
+		
+		<fmt:message key="search" bundle="${msgs}" />
+		<form method="post" action="controller.html" >
+				<input type="hidden" name="action" value="searchDrugs" />
+				<input type="text" id="search" name="search" size="52"/>
+				<input type="submit" name="search_but" value="<fmt:message key="search" bundle="${msgs}" />" />
+			</form>
 		</div>
    	<div id="menuWrapper">
    	
@@ -30,6 +37,7 @@
               <c:choose>
               	<c:when test="${sessionScope.userId != null}">
 					<a href = "controller.html?action=logout" type="submit"><fmt:message key="loginOut.Out" bundle="${msgs}" /></a>	
+					<a href = "controller.html?action=getOrders" type="submit"><fmt:message key="orders" bundle="${msgs}" /></a>
 						</c:when>
 				<c:when test="${sessionScope.userId == null}">	
               		<a href = "javascript:void(0)" onclick = "document.getElementById('envelope').style.display='block';document.getElementById('fade').style.display='block'"><fmt:message key="startPage.registration" bundle="${msgs}" /></a>
@@ -47,7 +55,8 @@
 		<div id="envelope" class="envelope">
 		<a class="close-btn" title="Закрыть" href="javascript:void(0)" onclick = "document.getElementById('envelope').style.display='none';document.getElementById('fade').style.display='none'"></a>
 		
-			<form method='post' class='registration' onsubmit='return validate(this);'>
+			<form method='post' class='registration' action="controller.html" onsubmit="validate(this);">
+				<input type="hidden" name="action" value="registration" />
 				<div class='input_form'>
 					<label>Name: </label>
     				<input type='text' id='first_name' name='first_name'>
@@ -70,11 +79,11 @@
 					</div>
 				<div class="input_form">
 					<br>
-					<input type="button" onclick="validate(this.form)" value="Register">
+					<input type="submit" value="Register">
 					</div>
 		</form>	
 		</div>
-  </div> <!-- конец header -->
+  </div> <!-- конец header  -->
   
   
   <div id="main">
@@ -91,7 +100,7 @@
     		<td align="left">
    			<h3 align="left"><span style="color:#669900;"><c:out value="${drug.drugName}" /></span></h3><br> 
  			<font size="3px"><c:out value="${drug.description}" />
-    		<td align="center"><a href ="controller.html?action=goodDetails&goodId=${drug.id}">Подробнее</a></td>
+    		<td align="center"><a href ="controller.html?action=goodDetails&goodId=${drug.id}"><fmt:message key="details" bundle="${msgs}" /></a></td>
   		</tr>
   	</c:forEach>
 	</table>
@@ -121,8 +130,8 @@
   </div>
   </div> <!-- конец  wrapper-->
   <div id="footer">
-	    <p align="center"><a href="#">О компании</a></p >
-        <p align="center"><a href="#">Контакты</a></p >
+	    <p align="center"><a href="#"><fmt:message key="company" bundle="${msgs}" /></a></p >
+        <p align="center"><a href="#"><fmt:message key="contacts" bundle="${msgs}" /></a></p >
         
  </div>
  
@@ -183,7 +192,7 @@
       else if (!/[@]/.test(email) || !/[.]/.test(email)) {
     	  sendError(elems.email.parentNode, ' *Поле заполнено некорректно.');
       }
-
+      return false;
     }
   </script>
   </body>

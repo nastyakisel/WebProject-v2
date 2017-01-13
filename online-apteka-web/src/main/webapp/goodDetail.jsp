@@ -30,6 +30,7 @@
               <c:choose>
               	<c:when test="${sessionScope.userId != null}">
 					<a href = "controller.html?action=logout" type="submit"><fmt:message key="loginOut.Out" bundle="${msgs}" /></a>	
+					<a href = "controller.html?action=getOrders" type="submit">Заказы</a>
 						</c:when>
 				<c:when test="${sessionScope.userId == null}">	
               		<a href = "javascript:void(0)" onclick = "document.getElementById('envelope').style.display='block';document.getElementById('fade').style.display='block'"><fmt:message key="startPage.registration" bundle="${msgs}" /></a>

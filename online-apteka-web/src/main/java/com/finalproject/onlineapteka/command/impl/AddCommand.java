@@ -14,7 +14,6 @@ public class AddCommand implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		HttpSession session = request.getSession();
 		RequestDispatcher dispatcher;
 		
 		String previousURI = request.getHeader("referer");

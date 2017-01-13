@@ -22,6 +22,12 @@
    	<div class="name">
    		<a href = "controller.html?action=ru"><fmt:message key="startPage.ruLocale" bundle="${msgs}" /></a>
 		<a href = "controller.html?action=en"><fmt:message key="startPage.enLocale" bundle="${msgs}" /></a>
+		<fmt:message key="search" bundle="${msgs}" />
+		<form method="post" action="controller.html" >
+				<input type="hidden" name="action" value="searchDrugs" />
+				<input type="text" id="search" name="search" size="52"/>
+				<input type="submit" name="search_but" value="<fmt:message key="search" bundle="${msgs}" />" />
+			</form>
 		</div>
    	<div id="menuWrapper">
    	
@@ -29,7 +35,8 @@
               <a href = "index.jsp"><fmt:message key="startPage.main" bundle="${msgs}" /></a>
               <c:choose>
               	<c:when test="${sessionScope.userId != null}">
-					<a href = "controller.html?action=logout" type="submit"><fmt:message key="loginOut.Out" bundle="${msgs}" /></a>	
+					<a href = "controller.html?action=logout" type="submit"><fmt:message key="loginOut.Out" bundle="${msgs}" /></a>
+					<a href = "controller.html?action=getOrders" type="submit"><fmt:message key="orders" bundle="${msgs}" /></a>		
 						</c:when>
 				<c:when test="${sessionScope.userId == null}">	
               		<a href = "javascript:void(0)" onclick = "document.getElementById('envelope').style.display='block';document.getElementById('fade').style.display='block'"><fmt:message key="startPage.registration" bundle="${msgs}" /></a>
@@ -57,7 +64,7 @@
     		<td align="left">
    			<h3 align="left"><span style="color:#669900;"><c:out value="${drug.drugName}" /></span></h3><br> 
  			<font size="3px"><c:out value="${drug.description}" />
-    		<td align="center"><a href ="controller.html?action=goodDetails&goodId=${drug.id}">Подробнее</a></td>
+    		<td align="center"><a href ="controller.html?action=goodDetails&goodId=${drug.id}"><fmt:message key="details" bundle="${msgs}" /></a></td>
   		</tr>
   	</c:forEach>
 	</table>

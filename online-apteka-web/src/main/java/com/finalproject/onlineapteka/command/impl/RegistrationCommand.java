@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,19 +20,24 @@ import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class RegistrationCommand implements Command {
-	private static final Logger logger = LogManager.getLogger(EditCommand.class
+	private static final Logger LOGGER = LogManager.getLogger(RegistrationCommand.class
 			.getName());
 
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		String userName = request.getParameter("user_login");
-		String password = request.getParameter("user_password");
-
+	
+		String firstName = request.getParameter("first_name");
+		String secondName = request.getParameter("second_name");
+		String password = request.getParameter("password");
+		String email = request.getParameter("email");
+		
 		User user = new User();
-		user.setUserName(userName);
+		user.setUserName(email);
 		user.setPassword(password);
 		user.setRoleId(1);
+		user.setFirstName(firstName);
+		user.setSecondName(secondName);
 
 		List<ErrorBean> errors = new ArrayList<ErrorBean>();
 
@@ -42,7 +46,7 @@ public class RegistrationCommand implements Command {
 		try {
 			id = addService.addUser(user);
 		} catch (ServiceException e) {
-			logger.error("Failed adding the user", e);
+			LOGGER.error("Failed adding the user", e);
 		}
 		if (id == 0) {
 			ErrorBean errorName = new ErrorBean(
@@ -58,6 +62,7 @@ public class RegistrationCommand implements Command {
 		}
 		
 		session.setAttribute("session_user", user);
-		response.sendRedirect("welcome.jsp");
+		response.sendRedirect("start.jsp");
 	}
+	
 }

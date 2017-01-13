@@ -7,4 +7,5 @@ import com.finalproject.onlineapteka.dao.exception.DAOException;
 
 public interface CategoryDao {
 	List<Category> loadAllCategories() throws DAOException;
+	List<Category> loadAllCategories(String locale) throws DAOException;
 }

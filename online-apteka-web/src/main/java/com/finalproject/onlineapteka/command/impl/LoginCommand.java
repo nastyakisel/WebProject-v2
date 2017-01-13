@@ -14,19 +14,19 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.finalproject.onlineapteka.bean.Category;
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.ErrorBean;
+import com.finalproject.onlineapteka.bean.Recipe;
 import com.finalproject.onlineapteka.bean.User;
 import com.finalproject.onlineapteka.command.Command;
-import com.finalproject.onlineapteka.service.CategoryService;
-import com.finalproject.onlineapteka.service.GoodsService;
+import com.finalproject.onlineapteka.service.DrugService;
+import com.finalproject.onlineapteka.service.RecipeService;
 import com.finalproject.onlineapteka.service.UserService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class LoginCommand implements Command {
-	private static final Logger logger = LogManager.getLogger(EditCommand.class
+	private static final Logger LOGGER = LogManager.getLogger(LoginCommand.class
 			.getName());
 
 	public void execute(HttpServletRequest request, HttpServletResponse response)
@@ -38,27 +38,23 @@ public class LoginCommand implements Command {
 		User user = new User();
 		user.setUserName(userName);
 		user.setPassword(password);
-
+		
 		HttpSession session = request.getSession();
 
-		List<ErrorBean> errors = new ArrayList<ErrorBean>();
-
-		UserService service = ServiceFactory.getInstance().getUserService();
+		UserService userService = ServiceFactory.getInstance().getUserService();
 		User receivedUser = null;
 
 		try {
-			receivedUser = service.getUser(userName, password);
+			receivedUser = userService.getUser(userName, password);
 		} catch (ServiceException e) {
-			logger.error("Failed receiving the user", e);
+			LOGGER.error("Failed receiving the user", e);
 		}
 
-		if (receivedUser == null) {
-			ErrorBean errorName = new ErrorBean("loginPage.errorUser");
-			errors.add(errorName);
-		}
-
-		if (!errors.isEmpty()) {
-			session.setAttribute("has_errors", errors);
+		List<ErrorBean> userErrors = validateUser(receivedUser);
+		
+		
+		if (!userErrors.isEmpty()) {
+			session.setAttribute("has_errors", userErrors);
 			session.setAttribute("current_user", user);
 			response.sendRedirect("login.jsp");
 
@@ -67,40 +63,64 @@ public class LoginCommand implements Command {
 
 		session.setAttribute("userId", receivedUser.getId());
 
-		List<Drug> drugList = null;
-		List<Category> categoryList = null;
-		GoodsService goodsService = (GoodsService) ServiceFactory.getInstance()
+		Command getAllGoods = new GetAllDrugsSessionCommand();
+		getAllGoods.execute(request, response);
+		
+		List<Drug> shoppingCart = (List<Drug>) session
+				.getAttribute("shoppingCart");
+		DrugService goodsService = (DrugService) ServiceFactory.getInstance()
 				.getGoodsService();
-		CategoryService categoryService = ServiceFactory.getInstance()
-				.getCategoryService();
 
-		try {
-			drugList = goodsService.getAllGoods();
-			categoryList = categoryService.getAllCategories();
-		} catch (ServiceException e) {
-			logger.error("Failed receiving the good", e);
-
+		if (shoppingCart != null) {  
+			for (int i = 0; i < shoppingCart.size(); i++) {
+				try {
+					goodsService.addDrugToCart(shoppingCart.get(i).getId(),
+							receivedUser.getId());
+				} catch (ServiceException e) {
+					LOGGER.error("Failed adding to cart", e);
+				}
+			}
 		}
 		
-		String session_Id = session.getId();
-		session.setAttribute("session_Id", session_Id);
-		session.setAttribute("drug_List", drugList);
-		session.setAttribute("category_List", categoryList);
-
 		Integer roleId = receivedUser.getRoleId();
-
-		response.sendRedirect(getURI(roleId));
-
+		
+		if (roleId == 3) {
+			RecipeService recipeService = ServiceFactory.getInstance()
+					.getRecipeService();
+			List<Recipe> recipeList = new ArrayList<>();
+			try {
+				recipeList = recipeService.getAllRecipes();
+			} catch (ServiceException e) {
+				LOGGER.error("Failed receving the recipe", e);
+			}
+			
+			session.setAttribute("recipeList", recipeList);
+			session.setAttribute("doctorUser", receivedUser);
+			response.sendRedirect("doctorPage.jsp");
+		} // if (roleId == 3)
+		else {
+			response.sendRedirect(getURI(roleId));
+		}
+		
 	}
 
 	public String getURI(Integer role) {
 		Map<String, String> roleMap = new HashMap<String, String>();
 		roleMap.put("1", "start.jsp");
 		roleMap.put("2", "administratorPage.jsp");
-		roleMap.put("3", "administratorPage.jsp");
+		//roleMap.put("3", "doctorPage.jsp");
 
 		String uri = roleMap.get(role.toString());
 		return uri;
 
+	}
+	private List<ErrorBean> validateUser(User user) {
+		List<ErrorBean> errors = new ArrayList<ErrorBean>();
+		if (user == null) {
+			ErrorBean errorName = new ErrorBean("loginPage.errorUser");
+			errors.add(errorName);
+		}
+		
+		return errors;
 	}
 }

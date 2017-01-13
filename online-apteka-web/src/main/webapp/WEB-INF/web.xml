@@ -16,4 +16,34 @@
         <exception-type>java.lang.NullPointerException</exception-type>
         <location>/error500.jsp</location>
     </error-page>
+    <filter>
+    	<filter-name>Basic Filter</filter-name>
+    	<filter-class>com.finalproject.onlineapteka.controller.BasicFilter</filter-class>
+    </filter>
+    <filter-mapping>
+    	<filter-name>Basic Filter</filter-name>
+    	<servlet-name>Controller</servlet-name>
+    </filter-mapping>
+   
+   	<filter>
+    	<filter-name>URL Filter</filter-name>
+    	<filter-class>com.finalproject.onlineapteka.controller.UrlFilter</filter-class>
+    </filter>
+   <filter-mapping>
+    	<filter-name>URL Filter</filter-name>
+    	<url-pattern>/assignRecipe.jsp</url-pattern>
+    	<url-pattern>/assignRecipe_2.jsp</url-pattern>
+    	<url-pattern>/doctorPage.jsp</url-pattern>
+    </filter-mapping>
+   
+    <servlet>
+    	<servlet-name>Controller</servlet-name>
+    	<servlet-class>com.finalproject.onlineapteka.controller.Controller</servlet-class>
+    </servlet>
+    <servlet-mapping>
+    	<servlet-name>Controller</servlet-name>
+    	<url-pattern>/controller.html</url-pattern>
+    </servlet-mapping>
+    
+    
 </web-app>
