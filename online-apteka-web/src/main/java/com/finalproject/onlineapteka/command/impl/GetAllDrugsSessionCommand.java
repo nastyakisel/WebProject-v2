@@ -3,7 +3,6 @@ package com.finalproject.onlineapteka.command.impl;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +25,10 @@ public class GetAllDrugsSessionCommand implements Command {
 			throws ServletException, IOException {
 
 		HttpSession session = request.getSession();
+		String requestLocale = (String) session.getAttribute("requestLocale");
+		if (requestLocale == null) {
+			requestLocale = "ru";
+		}
 		List<Drug> drugList = null;
 		List<Category> categoryList = null;
 		DrugService goodsService = (DrugService) ServiceFactory.getInstance()
@@ -34,8 +37,8 @@ public class GetAllDrugsSessionCommand implements Command {
 				.getCategoryService();
 
 		try {
-			drugList = goodsService.getAllDrugs();
-			categoryList = categoryService.getAllCategories();
+			drugList = goodsService.getAllDrugs(requestLocale);
+			categoryList = categoryService.getAllCategories(requestLocale);
 		} catch (ServiceException e) {
 			LOGGER.error("Failed receiving the good", e);
 

@@ -32,6 +32,17 @@ public class CartServiceImpl implements CartService{
 		return drugList;
 	}
 	@Override
+	public List<Drug> getDrugsFromCart(Integer userId, String locale) throws ServiceException {
+		CartDao cartDao = DAOFactoryImpl.getInstance().getCartDao();
+		List<Drug> drugList = null;
+		try {
+			drugList = cartDao.loadDrugsFromCart(userId, locale);
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
+		return drugList;
+	}
+	@Override
 	public void removeDrugFromCart(Integer drugId, Integer userId) throws ServiceException {
 		CartDao cartDao = DAOFactoryImpl.getInstance().getCartDao();
 		try {

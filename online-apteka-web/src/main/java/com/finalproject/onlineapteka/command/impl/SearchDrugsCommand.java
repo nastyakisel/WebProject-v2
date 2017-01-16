@@ -1,7 +1,6 @@
 package com.finalproject.onlineapteka.command.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -20,7 +19,6 @@ import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class SearchDrugsCommand implements Command{
 	private static final Logger LOGGER = LogManager.getLogger(SearchDrugsCommand.class.getName());
-	
 	
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

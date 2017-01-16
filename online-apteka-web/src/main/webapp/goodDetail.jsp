@@ -3,48 +3,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<fmt:setLocale value="${sessionScope.requestLocale}"/>
-<fmt:setBundle basename="com.finalproject.onlineapteka.messages.msgs" var="msgs" />
 
-<head>
-	<meta charset="utf-8">
-
-	<link rel="stylesheet" href="css/style2.css" type="text/css">
-
-	<title>
-		<fmt:message key="application.title" bundle="${msgs}" />
-	</title>
-</head>
-
-<body>
+<%@ include file="header.jsp" %>
  <div id="wrapper">
-   <div id="header">
-   	<div class="name">
-   		<a href = "controller.html?action=ru"><fmt:message key="startPage.ruLocale" bundle="${msgs}" /></a>
-		<a href = "controller.html?action=en"><fmt:message key="startPage.enLocale" bundle="${msgs}" /></a>
-		</div>
-   	<div id="menuWrapper">
-   	
-           <div id="menuHeader">
-              <a href = "index.jsp"><fmt:message key="startPage.main" bundle="${msgs}" /></a>
-              <c:choose>
-              	<c:when test="${sessionScope.userId != null}">
-					<a href = "controller.html?action=logout" type="submit"><fmt:message key="loginOut.Out" bundle="${msgs}" /></a>	
-					<a href = "controller.html?action=getOrders" type="submit">Заказы</a>
-						</c:when>
-				<c:when test="${sessionScope.userId == null}">	
-              		<a href = "javascript:void(0)" onclick = "document.getElementById('envelope').style.display='block';document.getElementById('fade').style.display='block'"><fmt:message key="startPage.registration" bundle="${msgs}" /></a>
-              		<a href = "login.jsp"><fmt:message key="startPage.login" bundle="${msgs}" /></a>
-              		</c:when>
-              		</c:choose>
-              	<a href = "controller.html?action=getFromCart"><fmt:message key="startPage.shoppingCart" bundle="${msgs}" /></a>
-            </div>
-  		</div>
-  		
-  		<div id="logoName"><img src="css/img/apteka.jpg" width="120" height="120"></img></div>
- 
-  </div> <!-- конец header -->
-  
   <div id="main">
   
    	<div id="container">
@@ -58,7 +19,7 @@
     		<td align="left">
    			<h3 align="left"><span style="color:#669900;"><c:out value="${drug.drugName}" /></span></h3><br> 
  			<font size="3px"><c:out value="${drug.description}" />
- 			<td align="center"><h3><span style="color:#669900;">Цена, руб.</span></h3><br>
+ 			<td align="center"><h3><span style="color:#669900;"><fmt:message key="price" bundle="${msgs}" /></span></h3><br>
  			<c:out value="${drug.price}" />
  			</td>
   		</tr>
@@ -71,9 +32,19 @@
  			<form method="post" action="controller.html">
  				<input type="hidden" name="action" value="addGoodtoCart" />
  				<input type="hidden" name="drugId" value="${drug.id}" />
- 				<input type="submit" name="addCart_but" value="В корзину" onclick="this.value='Скрипт сработал'"  />
- 				<!-- <input type="button" value="Перейти в корзину" onClick='location.href="cart.jsp"'>-->
- 				<a href = "controller.html?action=getFromCart">Перейти в корзину</a>
+ 				<input type="submit" name="addCart_but" value="<fmt:message key="cart.add" bundle="${msgs}" />" onclick="this.value='Скрипт сработал'"  />
+ 				<!-- <input type="button" value="Перейти в корзину" onClick='location.href="cart.jsp"'>->
+ 				<a href = "controller.html?action=getFromCart"><fmt:message key="cart.go" bundle="${msgs}" /></a>-->
+ 				<c:if test="${sessionScope.has_errors != null}">
+ 					<c:if test="${sessionScope.has_errors == drug.id}">
+ 					<span class="errorText">
+							<fmt:message key="cartPage.drugExists" bundle="${msgs}" />
+						</span>
+ 					</c:if>
+ 					
+ 				</c:if>
+ 				
+
  			</form>
  			 </td>
   		</tr>
@@ -102,11 +73,8 @@
   </div> 
      
   </div>
+  <%@ include file="footer.jsp" %>
   </div> <!-- конец  wrapper-->
-  <div id="footer">
-	    <p align="center"><a href="#">О компании</a></p >
-        <p align="center"><a href="#">Контакты</a></p >
-        
- </div>
+ 
   </body>
   </html>

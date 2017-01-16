@@ -26,8 +26,12 @@ public class GetDrugsByCategoryAdmCommand implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		HttpSession session = request.getSession();
 		Integer categotyId = Integer.parseInt(request.getParameter("catId"));
-
+		String requestLocale = (String) session.getAttribute("requestLocale");
+		if (requestLocale == null) {
+			requestLocale = "ru";
+		}
 		List<Drug> drugList = null;
 		List<Category> categoryList = null;
 		DrugService service = (DrugService) ServiceFactory.getInstance()
@@ -36,13 +40,12 @@ public class GetDrugsByCategoryAdmCommand implements Command {
 				.getCategoryService();
 
 		try {
-			drugList = service.getGrugsByCategory(categotyId);
-			categoryList = categoryService.getAllCategories();
+			drugList = service.getGrugsByCategory(categotyId, requestLocale);
+			categoryList = categoryService.getAllCategories(requestLocale);
 		} catch (ServiceException e) {
 			LOGGER.error("Failed receiving the good", e);
 		}
 
-		HttpSession session = request.getSession();
 		session.setAttribute("categotyId", categotyId);
 
 		request.setAttribute("drug_List", drugList);

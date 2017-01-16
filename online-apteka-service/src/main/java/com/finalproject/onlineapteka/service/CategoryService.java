@@ -7,4 +7,5 @@ import com.finalproject.onlineapteka.service.exception.ServiceException;
 
 public interface CategoryService {
 	public List<Category> getAllCategories() throws ServiceException;
+	List<Category> getAllCategories(String locale) throws ServiceException;
 }

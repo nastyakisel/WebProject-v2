@@ -3,37 +3,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<fmt:setLocale value="${sessionScope.requestLocale}"/>
-<fmt:setBundle basename="com.finalproject.onlineapteka.messages.msgs" var="msgs" />
-
-<head>
-	<meta charset="utf-8">
-
-	<link rel="stylesheet" href="css/style2.css" type="text/css">
-
-	<title>
-		<fmt:message key="application.title" bundle="${msgs}" />
-	</title>
-</head>
-
-
-<body>
+<%@ include file="headerPharm.jsp" %>
  <div id="wrapper">
-   <div id="header">
-   	<div class="name">
-   		<a href = "controller.html?action=ru"><fmt:message key="startPage.ruLocale" bundle="${msgs}" /></a>
-		<a href = "controller.html?action=en"><fmt:message key="startPage.enLocale" bundle="${msgs}" /></a>
-		</div>
-   	<div id="menuWrapper">
-   	
-           <div id="menuHeader">
-              <a href = "controller.html?action=logout"><fmt:message key="loginOut.Out" bundle="${msgs}" /></a>
-            </div>
-  		</div>
-  		
-  		<div id="logoName"><img src="img/apteka.jpg" width="120" height="120"></img></div>
- 
-  </div> <!-- конец header -->
   
   <div id="main">
   
@@ -50,8 +21,8 @@
     		<td align="left">
    			<h3 align="left"><span style="color:#669900;"><c:out value="${drug.drugName}" /></span></h3><br> 
  			<font size="3px"><c:out value="${drug.description}" />
-    		<td align="center"><a href ="controller.html?action=edit&drugId=${drug.id}">Редактировать</a></td>
-    		<td align="center"><a href ="controller.html?action=delete&drugId=${drug.id}">Удалить</a></td>
+    		<td align="center"><a href ="controller.html?action=edit&drugId=${drug.id}"><fmt:message key="admin.Update" bundle="${msgs}" /></a></td>
+    		<td align="center"><a href ="controller.html?action=delete&drugId=${drug.id}"><fmt:message key="admin.Delete" bundle="${msgs}" /></a></td>
   		</tr>
   	</c:forEach>
 	</table>
@@ -80,11 +51,7 @@
      
   </div>
   </div> <!-- конец  wrapper-->
-  <div id="footer">
-	    <p align="center"><a href="#">О компании</a></p >
-        <p align="center"><a href="#">Контакты</a></p >
-        
- </div>
+ 
   </body>
 
 </html>

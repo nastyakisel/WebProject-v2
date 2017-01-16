@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,31 +13,31 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.finalproject.onlineapteka.bean.Drug;
+import com.finalproject.onlineapteka.bean.Recipe;
 import com.finalproject.onlineapteka.command.Command;
-import com.finalproject.onlineapteka.service.OrderDetailService;
+import com.finalproject.onlineapteka.service.RecipeService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
-public class GetOrderDetailsCommand implements Command {
+public class DoctorCommand implements Command{
 	private static final Logger LOGGER = LogManager
-			.getLogger(GetOrderDetailsCommand.class.getName());
+			.getLogger(DoctorCommand.class.getName());
+
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
-		OrderDetailService orderDetailService = (OrderDetailService) ServiceFactory.getInstance()
-				.getOrderDetailService();
-		
+
 		HttpSession session = request.getSession();
-		String customOrderId = request.getParameter("orderId");
-		List<Drug> drugsInOrder = new ArrayList<>();
+		
+		RecipeService recipeService = ServiceFactory.getInstance()
+				.getRecipeService();
+		List<Recipe> recipeList = new ArrayList<>();
 		try {
-			drugsInOrder = orderDetailService.getDrugsFromOrderDetail(Integer.parseInt(customOrderId));
+			recipeList = recipeService.getAllRecipes();
 		} catch (ServiceException e) {
-			LOGGER.error("Failed loading the drugs from orderDetail", e);
+			LOGGER.error("Failed receving the recipe", e);
 		}
-		session.setAttribute("drugsInCustomOrder", drugsInOrder);
-		session.setAttribute("customOrderId", customOrderId);
-		response.sendRedirect("orderDetails.jsp");
+
+		session.setAttribute("recipeList", recipeList);
+		response.sendRedirect("doctorPage.jsp");
 	}
 }

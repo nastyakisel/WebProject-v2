@@ -16,9 +16,6 @@ import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.Recipe;
 import com.finalproject.onlineapteka.bean.User;
 import com.finalproject.onlineapteka.command.Command;
-import com.finalproject.onlineapteka.service.CartService;
-import com.finalproject.onlineapteka.service.OrderDetailService;
-import com.finalproject.onlineapteka.service.OrderService;
 import com.finalproject.onlineapteka.service.RecipeDetailService;
 import com.finalproject.onlineapteka.service.RecipeService;
 import com.finalproject.onlineapteka.service.UserService;
@@ -52,9 +49,6 @@ public class GetRecipeDetailsCommand implements Command {
 			} catch (ServiceException e) {
 				LOGGER.error("Failed receiving the recipe", e);
 			}
-		
-		Integer userId = (Integer) session.getAttribute("userId");
-		String previousURI = request.getHeader("referer");
 		
 		session.setAttribute("recipe", recipe);
 		session.setAttribute("userInRecipe", userInRecipe);

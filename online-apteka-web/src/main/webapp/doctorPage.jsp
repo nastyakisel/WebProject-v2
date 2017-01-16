@@ -3,20 +3,19 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<%@ include file="header.jsp" %>
-	
+<%@ include file="headerPharm.jsp" %>
+	<div id="wrapper">
 	<div id="content">
 
 	<table width="98%" border="0" cellspacing="1">
-   	<h2>Рецепты</h2>
-   	<h2><c:out value="${session_Id}" /></h2>
- 
-   	Имя доктора:
+   	<h2><fmt:message key="doctor.Recipes" bundle="${msgs}" /></h2>
+   	
+   	<fmt:message key="doctor.Name" bundle="${msgs}" />
    	<h2><c:out value="${doctorUser.userName}" /></h2>
   	<tr>
   	<form method="post" action="controller.html">
  				<input type="hidden" name="action" value="assignRecipe" />
- 				<td><input type="submit" name="addRecipe_but" value="Назначить новый рецепт" onclick="this.value='Скрипт сработал'"  /></td>
+ 				<td><input type="submit" name="addRecipe_but" value="<fmt:message key="doctor.assignRecipe" bundle="${msgs}" />" onclick="this.value='Скрипт сработал'"  /></td>
  				<!-- <input type="button" value="Перейти в корзину" onClick='location.href="cart.jsp"'>-->
  				
  			</form>
@@ -35,9 +34,9 @@
 			<td><c:out value = "${recipe.beginDate} - ${recipe.endDate}"/></td>
 			<td>
 			<form method="post" action="controller.html">
- 				<input type="hidden" name="action" value="prolongRecipe" />
+ 				<input type="hidden" name="action" value="recipeDetails" />
  				<input type="hidden" name="recipeId" value="${recipe.id}" />
- 				<input type="submit" name="addRecipe_but" value="Продлить" onclick="this.value='Скрипт сработал'"  />
+ 				<input type="submit" name="addRecipe_but" value="<fmt:message key="doctor.Prolong" bundle="${msgs}" />" onclick="this.value='Скрипт сработал'"  />
  				<!-- <input type="button" value="Перейти в корзину" onClick='location.href="cart.jsp"'>-->
  			</form> </td>
 			
@@ -47,8 +46,6 @@
   	
    	</table>
 		
-	</div>
-	</div>
 	</div>
 	</div>
 	

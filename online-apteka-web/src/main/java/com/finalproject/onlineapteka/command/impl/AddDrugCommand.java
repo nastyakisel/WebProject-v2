@@ -9,7 +9,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,62 +25,30 @@ public class AddDrugCommand implements Command{
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		HttpSession session = request.getSession();
 		RequestDispatcher dispatcher;
 		
+		List<String> strList = new ArrayList<String>();
+		
 		String goodName = request.getParameter("good_name");
+		strList.add(goodName);
 		String description = request.getParameter("good_descr");
+		strList.add(description);
 		String goodDosage = request.getParameter("dosage");
+		strList.add(goodDosage);
 		String instruction = request.getParameter("instruction");
+		strList.add(instruction);
 		String goodPrice = request.getParameter("price");
+		strList.add(goodPrice);
 		String goodQuantity = request.getParameter("quantity");
+		strList.add(goodQuantity);
 		String goodRecipe =  request.getParameter("recipe");
+		strList.add(goodRecipe);
 		String imagePath = request.getParameter("image");
+		strList.add(imagePath);
 		String goodCategoryId = request.getParameter("cat_id");
+		strList.add(goodCategoryId);
 		
-		List<ErrorBean> errors = new ArrayList<ErrorBean>();
-		
-		if (goodName.isEmpty()) {
-			ErrorBean emptyName = new ErrorBean("addGood.emptyName.error");
-			errors.add(emptyName);
-		}
-		
-		if (description.isEmpty()) {
-			ErrorBean emptyDescription = new ErrorBean("addGood.emptyDescription.error");
-			errors.add(emptyDescription);
-		}
-		
-		if (goodDosage.isEmpty()) {
-			ErrorBean emptyDosage = new ErrorBean("addGood.emptyDosage.error");
-			errors.add(emptyDosage);
-		}
-		
-		if (instruction.isEmpty()) {
-			ErrorBean emptyInstruction = new ErrorBean("addGood.emptyInstruction.error");
-			errors.add(emptyInstruction);
-		}
-		if (goodPrice.isEmpty()) {
-			ErrorBean emptyGoodPrice = new ErrorBean("addGood.emptyGoodPrice.error");
-			errors.add(emptyGoodPrice);
-		}
-		
-		if (goodQuantity.isEmpty()) {
-			ErrorBean emptyGoodQuantity = new ErrorBean("addGood.emptyGoodQuantity.error");
-			errors.add(emptyGoodQuantity);
-		}
-		if (goodRecipe.isEmpty()) {
-			ErrorBean emptyGoodRecipe = new ErrorBean("addGood.emptyGoodRecipe.error");
-			errors.add(emptyGoodRecipe);
-		}
-		
-		if (imagePath.isEmpty()) {
-			ErrorBean emptyPassword = new ErrorBean("addGood.emptyGoodRecipe.error");
-			errors.add(emptyPassword);
-		}
-		if (goodCategoryId.isEmpty()) {
-			ErrorBean emptyGoodCategoryId = new ErrorBean("addGood.emptyGoodCategoryId.error");
-			errors.add(emptyGoodCategoryId);
-		}
+		List<ErrorBean> errors = validateInput(strList);
 		
 		if (!errors.isEmpty()) {
 			dispatcher = request.getRequestDispatcher("addGood.jsp");
@@ -112,5 +79,16 @@ public class AddDrugCommand implements Command{
 		String previousURL = request.getParameter("previousURI");
 		response.sendRedirect(previousURL);
 	}
+	}
+	private List<ErrorBean> validateInput(List<String> inputList) {
+		List<ErrorBean> errors = new ArrayList<ErrorBean>();
+		for (int i = 0; i < inputList.size(); i++) {
+			if (inputList.get(i).isEmpty()) {
+				ErrorBean emptyInput = new ErrorBean(inputList.get(i));
+				errors.add(emptyInput);
+			}
+		}
+
+		return errors;
 	}
 }

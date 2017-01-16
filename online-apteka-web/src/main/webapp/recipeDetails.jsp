@@ -3,45 +3,42 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<fmt:setLocale value="${sessionScope.requestLocale}"/>
-<fmt:setBundle basename="com.finalproject.onlineapteka.messages.msgs" var="msgs" />
-
-<head>
-	<link rel="stylesheet" href="css/style.css" type="text/css">
-
-	<title>
-		<fmt:message key="application.title" bundle="${msgs}" />
-	</title>
-</head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<%@ include file="headerPharm.jsp" %>
+	<div id="wrapper">
+	
 <body>
 	<div class="registration">
-		<h2>Рецепт</h2>
-		Имя доктора:
+		<h2><fmt:message key="doctor.Recipe" bundle="${msgs}" /></h2>
+		
+			<br />
+			<br />
+		<fmt:message key="doctor.Name" bundle="${msgs}" />
    		<h2><c:out value="${doctorUser.userName}" /></h2>
-   		Id рецепта:
+   		<fmt:message key="doctor.Recipe.Id" bundle="${msgs}" />
 		<h2><c:out value="${recipe.id}" /></h2>
 		
-			Клиент:
+			<fmt:message key="doctor.Client" bundle="${msgs}" />
 			<br />
  			<c:out value="${userInRecipe.userName}, ${userInRecipe.id}" />
  			
 			<br />
 			<br />
 			
-			Срок действия:
+			<fmt:message key="doctor.Recipe.Validity" bundle="${msgs}" />
 			<br />
 			<c:out value = "${recipe.beginDate} - ${recipe.endDate}"/>
 			
 			<br />
 			<br />
 			<table>
-			<tr><td>Препарат:</td>
-			<td>Количество:</td>
+			<tr><td><fmt:message key="doctor.Drug" bundle="${msgs}" /></td>
+			<td></td>
+			<td><fmt:message key="doctor.Quantity" bundle="${msgs}" /></td>
 			
 			<c:forEach items="${sessionScope.drugListInRecipe}" var="drug">
 				<tr>
 				<td><c:out value="${drug.drugName}, ${drug.dosage}" /></td>
+				<td></td>
 				<td>
 				<c:out value="${drug.quantity}" /></td>
 			</c:forEach>
@@ -54,14 +51,11 @@
 			<form method="post" action="recipeDetails_2.jsp">
  				<!--  <input type="hidden" name="action" value="prolongRecipe" />
  				<input type="hidden" name="recipeId" value="${recipe.id}" /> -->
- 				<input type="submit" name="addRecipe_but" value="Продлить" onclick="this.value='Скрипт сработал'"  />
- 				<!-- <input type="button" value="Перейти в корзину" onClick='location.href="cart.jsp"'>-->
+ 				<input type="submit" name="addRecipe_but" value="<fmt:message key="doctor.Prolong" bundle="${msgs}" />"  />
+ 				
  			</form>
 			
-		
-		
 	</div>
-	
 	
 </body>
 </html>

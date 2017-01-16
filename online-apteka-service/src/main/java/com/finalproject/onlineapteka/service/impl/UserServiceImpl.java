@@ -34,7 +34,10 @@ public class UserServiceImpl implements UserService {
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
-		return user;
+		if(user.getPassword().equals(password)) {
+			return user;
+		}
+		return null;
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.command.Command;
+import com.finalproject.onlineapteka.service.CartService;
 import com.finalproject.onlineapteka.service.DrugService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
@@ -25,59 +26,73 @@ public class AddDrugToCartCommand implements Command {
 			throws ServletException, IOException {
 		DrugService goodService = (DrugService) ServiceFactory.getInstance()
  				.getGoodsService();
+		CartService cartService = ServiceFactory.getInstance()
+ 				.getCartService();
 		Integer drugId = Integer.parseInt(request.getParameter("drugId"));
 		 
  		HttpSession session = request.getSession();
+ 		String previousURI = request.getHeader("referer");
  		Integer userId = (Integer) session.getAttribute("userId");
+ 		String requestLocale = (String) session.getAttribute("requestLocale");
+ 		if (requestLocale == null) {
+			requestLocale = "ru";
+		}
  		List<Drug> shoppingCart = (List<Drug>) session
  								.getAttribute("shoppingCart");
+ 		
  		if (userId == null) {
  			if (shoppingCart == null) {
  				shoppingCart = new ArrayList<Drug>();
  			}
+ 			
+ 			Integer errorId = checkDrugInCart(shoppingCart, userId, drugId);
+ 			if (errorId != null) {
+ 				session.setAttribute("has_errors", errorId);
+ 				response.sendRedirect(previousURI);
+ 				return;
+ 			}
+ 			
  			Drug drug = null;
- 			try {
- 				drug = goodService.getDrugById(drugId);
+			try {
+				drug = goodService.getDrugById(drugId, requestLocale);
 				drug.setQuantity(1.00f);
  			} catch (ServiceException e) {
- 				LOGGER.error("Failed adding to cart", e);
+ 				LOGGER.error("Failed receiving the drug", e);
  			}
  			shoppingCart.add(drug);
- 			String session_Id = session.getId();
- 			session.setAttribute("session_Id", session_Id);
+ 			
  			session.setAttribute("shoppingCart", shoppingCart);
  
  		}
  		else {
+ 			List<Drug> drugList = null;
+			try {
+				drugList = cartService.getDrugsFromCart(userId, requestLocale);
+			} catch (ServiceException e1) {
+				LOGGER.error("Failed receiving the drug", e1);
+			}
+			Integer errorId = checkDrugInCart(drugList, userId, drugId);
+			if (errorId != null) {
+ 				session.setAttribute("has_errors", errorId);
+ 				response.sendRedirect(previousURI);
+ 				return;
+ 			}
  			try {
- 				goodService.addDrugToCart(drugId, userId);
+ 				cartService.addDrugToCart(drugId, userId);
  			} catch (ServiceException e) {
  				LOGGER.error("Failed adding to cart", e);
  			}
- 			if (shoppingCart != null) {
- 				for (int i = 0; i < shoppingCart.size(); i++) {
- 					try {
- 						goodService.addDrugToCart(shoppingCart.get(i).getId(), userId);
- 					} catch (ServiceException e) {
- 						LOGGER.error("Failed adding to cart", e);
- 					}
- 				}
- 				shoppingCart = null;
- 			}
- 			response.sendRedirect("start.jsp");
- 			/*if (shoppingCart == null) {
- 				shoppingCart = new ArrayList<Drug>();
- 			}
- 			try {
- 				shoppingCart = goodService.getDrugsFromCart(userId);
- 			} catch (ServiceException e) {
- 				logger.error("Failed receiving from cart", e);
- 			}
- 			String session_Id = session.getId();
- 			session.setAttribute("session_Id", session_Id);
- 			session.setAttribute("shoppingCart", shoppingCart);
- 		}*/
+ 			
 		}
+ 		response.sendRedirect(previousURI);
+	}
+	private Integer checkDrugInCart(List<Drug> drugList, Integer userId, Integer drugId) {
+		for (int i = 0; i < drugList.size(); i++) {
+				if (drugId == drugList.get(i).getId()) {
+					return drugId;
+				}
+			}
+		return null;
 	}
 }	
 

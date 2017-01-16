@@ -3,18 +3,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<fmt:setLocale value="${sessionScope.requestLocale}"/>
-<fmt:setBundle basename="com.finalproject.onlineapteka.messages.msgs" var="msgs" />
-
-<head>
-	<meta charset="utf-8">
-
-	<link rel="stylesheet" href="css/style.css" type="text/css">
-
-	<title>
-		<fmt:message key="application.title" bundle="${msgs}" />
-	</title>
-</head>
+<%@ include file="header.jsp" %>
+<div id="wrapper">
 
 <body>
 	<div class="registration">

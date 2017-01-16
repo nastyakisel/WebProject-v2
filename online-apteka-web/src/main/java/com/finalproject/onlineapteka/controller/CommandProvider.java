@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.command.impl.AddCommand;
+import com.finalproject.onlineapteka.command.impl.DoctorCommand;
 import com.finalproject.onlineapteka.command.impl.GetCategoriesCommand;
 import com.finalproject.onlineapteka.command.impl.GetRecipeDetailsCommand;
 import com.finalproject.onlineapteka.command.impl.ProlongRecipeCommand;
@@ -59,6 +60,7 @@ public class CommandProvider {
 		commands.put("recipeDetails", new GetRecipeDetailsCommand());
 		commands.put("searchDrugs", new SearchDrugsCommand());
 		commands.put("getCategories", new GetCategoriesCommand());
+		commands.put("doctorCommand", new DoctorCommand());
 			
 	}
 	

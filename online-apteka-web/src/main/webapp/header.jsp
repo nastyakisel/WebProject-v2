@@ -10,7 +10,7 @@
 	<meta charset="utf-8">
 
 	<link rel="stylesheet" href="css/style2.css" type="text/css">
-
+	<script type="text/javascript" src="js/registration.js"></script>
 	<title>
 		<fmt:message key="application.title" bundle="${msgs}" />
 	</title>
@@ -23,7 +23,6 @@
    		<a href = "controller.html?action=ru"><fmt:message key="startPage.ruLocale" bundle="${msgs}" /></a>
 		<a href = "controller.html?action=en"><fmt:message key="startPage.enLocale" bundle="${msgs}" /></a>
 		
-		<fmt:message key="search" bundle="${msgs}" />
 		<form method="post" action="controller.html" >
 				<input type="hidden" name="action" value="searchDrugs" />
 				<input type="text" id="search" name="search" size="52"/>
@@ -41,7 +40,8 @@
 						</c:when>
 				<c:when test="${sessionScope.userId == null}">	
               		<a href = "javascript:void(0)" onclick = "document.getElementById('envelope').style.display='block';document.getElementById('fade').style.display='block'"><fmt:message key="startPage.registration" bundle="${msgs}" /></a>
-              		<a href = "login.jsp"><fmt:message key="startPage.login" bundle="${msgs}" /></a>
+              		<a href = "javascript:void(0)" onclick = "document.getElementById('envelope2').style.display='block';document.getElementById('fade').style.display='block'"><fmt:message key="startPage.login" bundle="${msgs}" /></a>
+
               		</c:when>
               		</c:choose>
               	<a href = "controller.html?action=getFromCart"><fmt:message key="startPage.shoppingCart" bundle="${msgs}" /></a>
@@ -50,6 +50,65 @@
   		
   		<div id="logoName"><img src="css/img/apteka.jpg" width="120" height="120"></img></div>
 
+	<div id="fade" class="black-overlay"></div>
+		
+		<div id="envelope2" class="envelope2">
+		<a class="close-btn" title="Закрыть" href="javascript:void(0)" onclick = "document.getElementById('envelope2').style.display='none';document.getElementById('fade').style.display='none'"></a>
+			<form method='post' class='registration' action="controller.html" onsubmit="return loginvalidate(this);">
+				<input type="hidden" name="action" value="login" />
+				<input type="hidden" name="locale" value="${sessionScope.requestLocale}" />
+				<div class='input_form'>
+					<label><fmt:message key="loginPage.userName.label" bundle="${msgs}" /></label>
+    				<input type='text' id='user_login' name='user_login'>
+  					</div>
+  				<div class='input_form'>
+    				<label><fmt:message key="loginPage.password.label" bundle="${msgs}" /></label>
+    				<input type='text' id='user_password' name='user_password'>
+					</div>
+				
+				<div class="knopka">
+					<br>
+					<input type="submit" value="<fmt:message key="loginPage.button" bundle="${msgs}" />">
+					</div>
+		</form>	
+		</div>
+		
+		
+		<div id="envelope" class="envelope">
+		<a class="close-btn" title="Закрыть" href="javascript:void(0)" onclick = "document.getElementById('envelope').style.display='none';document.getElementById('fade').style.display='none'"></a>
+			<form method='post' class='registration' action="controller.html" onsubmit="return validate(this);">
+				<input type="hidden" name="action" value="registration" />
+				<input type="hidden" name="locale" value="${sessionScope.requestLocale}" />
+				<div class='input_form'>
+					<label><fmt:message key="registration.firstName" bundle="${msgs}" /></label>
+    				<input type='text' id='first_name' name='first_name'>
+  					</div>
+				<div class='input_form'>
+					<label><fmt:message key="registration.lastName" bundle="${msgs}" /></label>
+    				<input type='text' id='second_name' name='second_name'>
+  					</div>
+  				<div class='input_form'>
+    				<label><fmt:message key="registration.password" bundle="${msgs}" /></label>
+    				<input type='text' id='password' name='password'>
+					</div>
+				<div class='input_form'>
+    				<label><fmt:message key="registration.password.repeat" bundle="${msgs}" /></label>
+    				<input type='text' id='repeat_password' name='repeat_password'>
+					</div>
+				<div class='input_form'>
+					<label><fmt:message key="registration.email" bundle="${msgs}" /></label>
+					<input type='text' id='email' name='email'>
+					</div>
+				<div class="knopka">
+					<br>
+					<input type="submit" value="<fmt:message key="registration.button" bundle="${msgs}" />">
+					</div>
+		</form>	
+		
+		<div id="fade" class="black-overlay"></div>
+		
+		</div>
+		
 		
   </div> <!-- конец header  -->
   </div>

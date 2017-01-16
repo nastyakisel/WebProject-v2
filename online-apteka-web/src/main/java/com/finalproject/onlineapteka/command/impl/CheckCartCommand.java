@@ -1,12 +1,8 @@
 package com.finalproject.onlineapteka.command.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,7 +16,6 @@ import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.User;
 import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.CartService;
-import com.finalproject.onlineapteka.service.DrugService;
 import com.finalproject.onlineapteka.service.UserService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
@@ -31,13 +26,16 @@ public class CheckCartCommand implements Command {
 
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		DrugService goodService = (DrugService) ServiceFactory.getInstance()
-				.getGoodsService();
+		
 		CartService cartService = ServiceFactory.getInstance()
 				.getCartService();
 		UserService userService = ServiceFactory.getInstance().getUserService();
 		
 		HttpSession session = request.getSession();
+		String requestLocale = (String) session.getAttribute("requestLocale");
+		if (requestLocale == null) {
+			requestLocale = "ru";
+		}
 		Integer userId = (Integer) session.getAttribute("userId");
 		List<Drug> shoppingCart = (List<Drug>) session
 				.getAttribute("shoppingCart");
@@ -48,9 +46,7 @@ public class CheckCartCommand implements Command {
 		String[] drugId = request.getParameterValues("drugId");
 		String[] drugQuantity = request.getParameterValues("quantity");
 		String[] drugsToDelete = request.getParameterValues("checkbox");
-		// Map<String, Float> mapQuantity = new HashMap<>();
-		// mapQuantity.put(drugId[k], Float.valueOf(drugQuantity[k]));
-
+		
 		if (count != null) {
 			if (userId != null) {
 				for (int k = 0; k < drugId.length; k++) {
@@ -59,13 +55,13 @@ public class CheckCartCommand implements Command {
 					cart.setDrugId(Integer.parseInt(drugId[k]));
 					cart.setUserId(userId);
 					try {
-						goodService.changeCart(cart);
+						cartService.changeCart(cart);
 					} catch (ServiceException e) {
 						LOGGER.error("Failed updating the cart", e);
 					}
 				} // for
 				try {
-					shoppingCart = goodService.getDrugsFromCart(userId);
+					shoppingCart = cartService.getDrugsFromCart(userId, requestLocale);
 				} catch (ServiceException e) {
 					LOGGER.error("Failed receiving from the cart", e);
 				}
@@ -101,9 +97,9 @@ public class CheckCartCommand implements Command {
 
 				for (int i = 0; i < drugsToDelete.length; i++) {
 					try {
-						goodService.removeDrugFromCart(
+						cartService.removeDrugFromCart(
 								Integer.parseInt(drugsToDelete[i]), userId);
-						shoppingCart = goodService.getDrugsFromCart(userId);
+						shoppingCart = cartService.getDrugsFromCart(userId, requestLocale);
 					} catch (NumberFormatException | ServiceException e) {
 						LOGGER.error("Failed delete from cart", e);
 					}

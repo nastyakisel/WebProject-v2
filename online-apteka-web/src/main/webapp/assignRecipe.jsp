@@ -3,29 +3,24 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<fmt:setLocale value="${sessionScope.requestLocale}"/>
-<fmt:setBundle basename="com.finalproject.onlineapteka.messages.msgs" var="msgs" />
+<%@ include file="headerPharm.jsp" %>
+	<div id="wrapper">
 
-<head>
-	<link rel="stylesheet" href="css/style.css" type="text/css">
-
-	<title>
-		<fmt:message key="application.title" bundle="${msgs}" />
-	</title>
-</head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <body>
 	<div class="registration">
-		<h2>Создать новый рецепт</h2>
-		Имя доктора:
+		<h2><fmt:message key="doctor.NewRecipe" bundle="${msgs}" /></h2>
+		<br />
+		<fmt:message key="doctor.Name" bundle="${msgs}" />
    		<h2><c:out value="${doctorUser.userName}" /></h2>
-   		Id рецепта:
+   		<br />
+   		<fmt:message key="doctor.Recipe.Id" bundle="${msgs}" />
 		<h2><c:out value="${recipeId}" /></h2>
+		<br />
 		<form method="post" action="controller.html" >
 		
 			<input type="hidden" name="action" value="createRecipe" />
 			<input type="hidden" name="previousURI" value="${previousURI}" />
-			Клиент
+			<fmt:message key="doctor.Client" bundle="${msgs}" />
 			<br />
 			<c:if test="${selectedUser != null}">
  				<c:out value="${selectedUser.userName}" />
@@ -33,7 +28,7 @@
  			
  			<c:if test="${selectedUser == null}">
 			<select name = "selectedUser">
- 				<option disabled>Выберите клиента</option>
+ 				<option disabled><fmt:message key="doctor.Choose.Client" bundle="${msgs}" /></option>
  				
  				<c:forEach items="${sessionScope.clientList}" var="user">
  				
@@ -44,10 +39,10 @@
 			</c:if>
 			<br />
 			<br />
-			Препарат
+			<fmt:message key="doctor.Drug" bundle="${msgs}" />
 			<br />
 			<select name = "selectedDrug">
- 				<option disabled>Выберите препарат</option>
+ 				<option disabled><fmt:message key="doctor.Choose.Drug" bundle="${msgs}" /></option>
  	<c:forEach items="${sessionScope.drugListWhithRecipe}" var="drug">
  				
 				<option value="${drug.id}"><c:out value="${drug.drugName}, ${drug.dosage}" /></option>
@@ -56,13 +51,13 @@
 	</select>
 			<br />
 			<br />
-			Дозировка
+			<fmt:message key="doctor.Dosage" bundle="${msgs}" />
 			<br />
 			<input type="text" id="dosage" name="dosage" size="52"/>
 				
 			<br />
 			<br />
-			Количество 
+			<fmt:message key="doctor.Quantity" bundle="${msgs}" /> 
 			<br />
 			<input type="text" id="quantity" name="quantity" />
 				
@@ -70,26 +65,25 @@
 			<br />
 			
 			<c:if test="${selectedUser == null}">
-			<td>Действие рецепта с</td>
+			<td><fmt:message key="doctor.Recipe.From" bundle="${msgs}" /> </td>
             <br />       
             <input type="date" id="begin_date" name="begin_date" min="2017-01-01" max="2018-01-01"/>
                             
             <br />
 			<br />              
 			
-			<td>По</td>
+			<td><fmt:message key="doctor.Till" bundle="${msgs}" /></td>
             <br />       
             <input type="date" id="end_date" name="end_date" min="2017-01-01" max="2018-01-01"/>
                             
             <br />
 			<br /> 
 			</c:if>
-			<input type="submit" name="add_but" value="Создать" />
+			<input type="submit" name="add_but" value="<fmt:message key="doctor.Create" bundle="${msgs}" />" />
 			
 		</form>
 		
 	</div>
-	
 	
 </body>
 </html>

@@ -12,4 +12,5 @@ public interface CartDao {
 	void deleteDrugFromCart(Integer drugId, Integer userId) throws DAOException;
 	void updateDrugInCart(Cart cart) throws DAOException;
 	void deleteCart(Integer userId) throws DAOException;
+	List<Drug> loadDrugsFromCart(Integer userId, String locale) throws DAOException;
 }

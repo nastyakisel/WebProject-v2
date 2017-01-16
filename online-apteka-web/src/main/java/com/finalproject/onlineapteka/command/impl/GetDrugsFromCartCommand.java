@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.command.Command;
-import com.finalproject.onlineapteka.service.DrugService;
+import com.finalproject.onlineapteka.service.CartService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
@@ -25,11 +25,16 @@ public class GetDrugsFromCartCommand implements Command {
 
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		DrugService goodService = (DrugService) ServiceFactory.getInstance()
-				.getGoodsService();
+		
+		CartService cartService = ServiceFactory.getInstance()
+ 				.getCartService();
 
 		HttpSession session = request.getSession();
 		Integer userId = (Integer) session.getAttribute("userId");
+		String requestLocale = (String) session.getAttribute("requestLocale");
+		if (requestLocale == null) {
+			requestLocale = "ru";
+		}
 
 		if (userId == null) {
 			RequestDispatcher dispatcher = request
@@ -45,12 +50,10 @@ public class GetDrugsFromCartCommand implements Command {
 				shoppingCart = new ArrayList<Drug>();
 			}
 			try {
-				shoppingCart = goodService.getDrugsFromCart(userId);
+				shoppingCart = cartService.getDrugsFromCart(userId, requestLocale);
 			} catch (ServiceException e) {
 				LOGGER.error("Failed receiving from cart", e);
 			}
-			String session_Id = session.getId();
-			session.setAttribute("session_Id", session_Id);
 			session.setAttribute("shoppingCart", shoppingCart);
 			RequestDispatcher dispatcher = request
 					.getRequestDispatcher("cart.jsp");

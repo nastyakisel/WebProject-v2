@@ -139,44 +139,7 @@ public class DrugServiceImpl implements DrugService {
 			throw new ServiceException(e);
 		}
 	}
-	@Override
-	public void addDrugToCart(Integer drugId, Integer userId) throws ServiceException {
-		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		try {
-			drugDao.saveDrugToCart(drugId, userId);
-		} catch (DAOException e) {
-			throw new ServiceException(e);
-		}
-	}
-	@Override
-	public List<Drug> getDrugsFromCart(Integer userId) throws ServiceException {
-		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		List<Drug> drugList = null;
-		try {
-			drugList = drugDao.loadDrugsFromCart(userId);
-		} catch (DAOException e) {
-			throw new ServiceException(e);
-		}
-		return drugList;
-	}
-	@Override
-	public void removeDrugFromCart(Integer drugId, Integer userId) throws ServiceException {
-		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		try {
-			drugDao.deleteDrugFromCart(drugId, userId);
-		} catch (DAOException e) {
-			throw new ServiceException(e);
-		}
-	}
-	@Override
-	public void changeCart(Cart cart) throws ServiceException {
-		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		try {
-			drugDao.updateDrugInCart(cart);;
-		} catch (DAOException e) {
-			throw new ServiceException(e);
-		}
-	}
+	
 	@Override
 	public List<Drug> getDrugsByRecipe(Integer needRecipe) throws ServiceException {
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
