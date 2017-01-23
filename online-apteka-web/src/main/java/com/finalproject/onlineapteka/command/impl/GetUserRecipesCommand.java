@@ -1,7 +1,8 @@
 package com.finalproject.onlineapteka.command.impl;
 
 import java.io.IOException;
-import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,36 +18,26 @@ import com.finalproject.onlineapteka.service.RecipeService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
-public class ProlongRecipeCommand implements Command{
+public class GetUserRecipesCommand implements Command {
 	private static final Logger LOGGER = LogManager
-			.getLogger(CreateRecipeCommand.class.getName());
+			.getLogger(GetUserRecipesCommand.class.getName());
 
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("userId");
+		
 		RecipeService recipeService = ServiceFactory.getInstance()
 				.getRecipeService();
-
-		HttpSession session = request.getSession();
-		String prevURI = request.getHeader("referer");
-		
-		String endDate = request.getParameter("new_end_date");
-		if(endDate.isEmpty()) {
-			response.sendRedirect(prevURI);
-			return;
-		}
-		
-		Recipe recipe = (Recipe) session.getAttribute("recipe");
-		
+		List<Recipe> recipeList = new ArrayList<>();
 		try {
-			recipeService.updateRecipe(Date.valueOf(endDate), recipe.getId());
-			recipe = recipeService.getRecipeById(recipe.getId());
+			recipeList = recipeService.getRecipesByUser(userId);
 		} catch (ServiceException e) {
-			LOGGER.error("Failed apdating the recipe", e);
-
+			LOGGER.error("Failed receving the recipe", e);
 		}
-		session.setAttribute("recipe", recipe);
-		response.sendRedirect("recipeDetails.jsp");
-		
+
+		session.setAttribute("userRecipeList", recipeList);
+		response.sendRedirect("userRecipeList.jsp");
 	}
 }

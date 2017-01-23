@@ -18,7 +18,9 @@ public class RecipeDaoImpl implements RecipeDao {
 
 	private static final String SELECT_ALL_RECIPES = "SELECT* FROM recipe";
 
-	private static final String SELECT_GOOD_BY_ID = "SELECT* FROM recipe WHERE id=?";
+	private static final String SELECT_RECIPE_BY_ID = "SELECT* FROM recipe WHERE id=?";
+	
+	private static final String SELECT_RECIPE_BY_USER = "SELECT* FROM recipe WHERE FK_USER_TO_RECIPE=?";
 
 	private static final String INSERT_RECIPE = "INSERT INTO recipe(DOCTOR_NAME, BEGIN_DATE, END_DATE, FK_USER_TO_RECIPE) VALUES (?,?,?,?)";
 
@@ -59,7 +61,7 @@ public class RecipeDaoImpl implements RecipeDao {
 
 		try (Connection connection = DbPool.getPool().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement(SELECT_GOOD_BY_ID)) {
+						.prepareStatement(SELECT_RECIPE_BY_ID)) {
 			statement.setInt(1, recipeId);
 			try (ResultSet resultSet = statement.executeQuery()) {
 
@@ -75,6 +77,33 @@ public class RecipeDaoImpl implements RecipeDao {
 			throw new DAOException(e);
 		}
 		return recipe;
+	}
+	
+	@Override
+	public List<Recipe> loadRecipesByUser(Integer userId) throws DAOException {
+
+		List<Recipe> recipeList = new ArrayList<Recipe>();
+
+		try (Connection connection = DbPool.getPool().getConnection();
+				PreparedStatement statement = connection
+						.prepareStatement(SELECT_RECIPE_BY_USER)) {
+			statement.setInt(1, userId);
+			try (ResultSet resultSet = statement.executeQuery()) {
+
+				while (resultSet.next()) {
+					Recipe recipe = new Recipe();
+					recipe.setId(resultSet.getInt(1));
+					recipe.setDoctorName(resultSet.getString(2));
+					recipe.setBeginDate(resultSet.getDate(3));
+					recipe.setEndDate(resultSet.getDate(4));
+					recipe.setUserId(resultSet.getInt(5));
+					recipeList.add(recipe);
+				}
+			}
+		} catch (InterruptedException | SQLException e) {
+			throw new DAOException(e);
+		}
+		return recipeList;
 	}
 
 	@Override
@@ -106,13 +135,13 @@ public class RecipeDaoImpl implements RecipeDao {
 	}
 
 	@Override
-	public void alterRecipe(Date endDate, Integer drugId) throws DAOException {
+	public void alterRecipe(Date endDate, Integer recipeId) throws DAOException {
 		try (Connection connection = DbPool.getPool().getConnection();
 				PreparedStatement statement = connection
 						.prepareStatement(UPDATE_RECIPE)) {
 
 			statement.setDate(1, endDate, java.util.Calendar.getInstance());
-			statement.setInt(2, drugId);
+			statement.setInt(2, recipeId);
 
 			statement.executeUpdate();
 		} catch (InterruptedException | SQLException e) {

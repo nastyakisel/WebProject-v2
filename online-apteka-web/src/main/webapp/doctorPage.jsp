@@ -38,12 +38,9 @@
  				<input type="hidden" name="recipeId" value="${recipe.id}" />
  				<input type="submit" name="addRecipe_but" value="<fmt:message key="doctor.Prolong" bundle="${msgs}" />" onclick="this.value='Скрипт сработал'"  />
  				<!-- <input type="button" value="Перейти в корзину" onClick='location.href="cart.jsp"'>-->
- 			</form> </td>
-			
+ 			</form> </td>	
    		</tr>
-   		
    		</c:forEach>
-  	
    	</table>
 		
 	</div>

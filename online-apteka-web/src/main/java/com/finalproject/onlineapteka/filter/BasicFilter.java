@@ -1,4 +1,4 @@
-package com.finalproject.onlineapteka.controller;
+package com.finalproject.onlineapteka.filter;
 
 import java.io.IOException;
 

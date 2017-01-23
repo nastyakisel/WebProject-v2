@@ -1,8 +1,6 @@
 package com.finalproject.onlineapteka.command.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +24,8 @@ public class RegistrationCommand implements Command {
 	public void execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-	
+		HttpSession session = request.getSession();
+		String prevURL = request.getHeader("referer");
 		String firstName = request.getParameter("first_name");
 		String secondName = request.getParameter("second_name");
 		String password = request.getParameter("password");
@@ -39,29 +38,26 @@ public class RegistrationCommand implements Command {
 		user.setFirstName(firstName);
 		user.setSecondName(secondName);
 
-		List<ErrorBean> errors = new ArrayList<ErrorBean>();
-
-		Integer id = null;
+		Integer userId = null;
 		UserService addService = ServiceFactory.getInstance().getUserService();
 		try {
-			id = addService.addUser(user);
+			userId = addService.addUser(user);
 		} catch (ServiceException e) {
 			LOGGER.error("Failed adding the user", e);
 		}
-		if (id == 0) {
-			ErrorBean errorName = new ErrorBean(
-					"registrationPage.existUserError");
-			errors.add(errorName);
-		}
-
-		HttpSession session = request.getSession();
-		if (!errors.isEmpty()) {
-			session.setAttribute("has_errors", errors);
-			response.sendRedirect("registration.jsp");
-			return;
-		}
 		
-		session.setAttribute("session_user", user);
+		session.setAttribute("reg_error", null);
+		if (userId == 0) {
+			ErrorBean registrationError = new ErrorBean(
+					"registrationPage.existUserError");
+			session.setAttribute("reg_error", registrationError);
+			response.sendRedirect(prevURL);
+			return;
+			
+		}
+		Command getAllGoods = new GetAllDrugsSessionCommand();
+		getAllGoods.execute(request, response);
+		session.setAttribute("userId", userId);
 		response.sendRedirect("start.jsp");
 	}
 	

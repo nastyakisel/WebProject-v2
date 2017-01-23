@@ -11,6 +11,7 @@ public interface DrugService {
 	void addDrug(Drug drug) throws ServiceException;
 	Drug getDrugById(Integer id) throws ServiceException;
 	void editDrug(Drug drug) throws ServiceException;
+	void removeDrug(Integer drugId) throws ServiceException;
 	List<Drug> getDrugsByRecipe(Integer needRecipe) throws ServiceException;
 	List<Drug> getDrugsByName(String drugName) throws ServiceException;
 	List<Drug> getAllDrugs(String locale) throws ServiceException;

@@ -37,6 +37,7 @@
               	<c:when test="${sessionScope.userId != null}">
 					<a href = "controller.html?action=logout" type="submit"><fmt:message key="loginOut.Out" bundle="${msgs}" /></a>	
 					<a href = "controller.html?action=getOrders" type="submit"><fmt:message key="orders" bundle="${msgs}" /></a>
+					<a href = "controller.html?action=getUserRecipes" type="submit"><fmt:message key="user.Recipes" bundle="${msgs}" /></a>
 						</c:when>
 				<c:when test="${sessionScope.userId == null}">	
               		<a href = "javascript:void(0)" onclick = "document.getElementById('envelope').style.display='block';document.getElementById('fade').style.display='block'"><fmt:message key="startPage.registration" bundle="${msgs}" /></a>
@@ -50,11 +51,39 @@
   		
   		<div id="logoName"><img src="css/img/apteka.jpg" width="120" height="120"></img></div>
 
+	<c:if test="${sessionScope.has_error != null}">
+				<script type="text/javascript">
+					var delay_popup = 20;
+					setTimeout("document.getElementById('envelope2').style.display='block';document.getElementById('fade').style.display='block'", delay_popup);
+					</script>
+						
+				</c:if>
+	<c:if test="${sessionScope.reg_error != null}">
+				<script type="text/javascript">
+					var delay_popup = 20;
+					setTimeout("document.getElementById('envelope').style.display='block';document.getElementById('fade').style.display='block'", delay_popup);
+					</script>
+						
+				</c:if>
+				
 	<div id="fade" class="black-overlay"></div>
 		
 		<div id="envelope2" class="envelope2">
+		
+		
 		<a class="close-btn" title="Закрыть" href="javascript:void(0)" onclick = "document.getElementById('envelope2').style.display='none';document.getElementById('fade').style.display='none'"></a>
+			<br>
+			<br>
 			<form method='post' class='registration' action="controller.html" onsubmit="return loginvalidate(this);">
+				<c:if test="${sessionScope.has_error != null}">
+					<c:if test="${has_error.errorMessage == 'loginPage.errorUser'}">
+						<span class="errorText">
+							<fmt:message key="loginPage.errorUser" bundle="${msgs}" />
+						</span>
+						
+					</c:if>
+				
+			</c:if>
 				<input type="hidden" name="action" value="login" />
 				<input type="hidden" name="locale" value="${sessionScope.requestLocale}" />
 				<div class='input_form'>
@@ -76,9 +105,19 @@
 		
 		<div id="envelope" class="envelope">
 		<a class="close-btn" title="Закрыть" href="javascript:void(0)" onclick = "document.getElementById('envelope').style.display='none';document.getElementById('fade').style.display='none'"></a>
+			<br>
+			<br>
 			<form method='post' class='registration' action="controller.html" onsubmit="return validate(this);">
+			<c:if test="${sessionScope.reg_error != null}">
+					<c:if test="${reg_error.errorMessage == 'registrationPage.existUserError'}">
+						<span class="errorText">
+							<fmt:message key="registrationPage.existUserError" bundle="${msgs}" />
+						</span>
+						</c:if>
+					</c:if>
 				<input type="hidden" name="action" value="registration" />
 				<input type="hidden" name="locale" value="${sessionScope.requestLocale}" />
+				
 				<div class='input_form'>
 					<label><fmt:message key="registration.firstName" bundle="${msgs}" /></label>
     				<input type='text' id='first_name' name='first_name'>

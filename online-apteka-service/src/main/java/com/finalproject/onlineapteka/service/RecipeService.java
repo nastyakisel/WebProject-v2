@@ -11,4 +11,5 @@ public interface RecipeService {
 	Integer addRecipe(Recipe recipe) throws ServiceException;
 	Recipe getRecipeById(Integer recipeId) throws ServiceException;
 	void updateRecipe(Date endDate, Integer drugId) throws ServiceException;
+	List<Recipe> getRecipesByUser(Integer userId) throws ServiceException;
 }

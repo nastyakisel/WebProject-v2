@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<%@ include file="headerPharm.jsp" %>
+<%@ include file="headerAdm.jsp" %>
 <div id="wrapper">
   
   <div id="main">
@@ -16,18 +16,18 @@
   <table width="98%" border="0" cellspacing="1">
   	<!--  <button><a href = "addGood.jsp" >Добавить</a></button>-->
   	
-  	<form method="post" action="controller.html" >
-  		<input type="hidden" name="action" value="add" />
+  	<form method="post" action="controller.html?action=add" >
+  		
   		<input type="submit" name="addGood_but" value="<fmt:message key="admin.Add" bundle="${msgs}" />" />
   	</form> 
-  <br />
+  <br>
   
   	<c:forEach items="${drug_List}" var="drug">
     	<tr>
     		<td align="center"><img src="${drug.imagePath}" width="140" height="120"></td>
     		<td align="left">
    			<h3 align="left"><span style="color:#669900;"><c:out value="${drug.drugName}" /></span></h3><br> 
- 			<font size="3px"><c:out value="${drug.description}" />
+ 			<c:out value="${drug.description}" />
     		<td align="center"><a href ="controller.html?action=edit&drugId=${drug.id}"><fmt:message key="admin.Update" bundle="${msgs}" /></a></td>
     		<td align="center"><a href ="controller.html?action=delete&drugId=${drug.id}"><fmt:message key="admin.Delete" bundle="${msgs}" /></a></td>
   		</tr>

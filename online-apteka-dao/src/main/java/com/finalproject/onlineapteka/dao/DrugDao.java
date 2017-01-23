@@ -11,6 +11,7 @@ public interface DrugDao {
 	void saveDrug(Drug drug) throws DAOException;
 	Drug loadDrugById(Integer id) throws DAOException;
 	void alterDrug(Drug drug) throws DAOException;
+	void deleteDrug(Integer drugId) throws DAOException;
 	List<Drug> loadDrugsByRecipe(Integer needRecipe) throws DAOException;
 	List<Drug> loadDrugsByName(String drugName) throws DAOException;
 	List<Drug> loadAllDrugs(String locale) throws DAOException;

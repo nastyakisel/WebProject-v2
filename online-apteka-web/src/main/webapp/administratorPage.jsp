@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
-<%@ include file="headerPharm.jsp" %>
+<%@ include file="headerAdm.jsp" %>
  <div id="wrapper">
   
   <div id="main">
@@ -19,8 +19,8 @@
     	<tr>
     		<td align="center"><img src="${drug.imagePath}" width="140" height="120"></td>
     		<td align="left">
-   			<h3 align="left"><span style="color:#669900;"><c:out value="${drug.drugName}" /></span></h3><br> 
- 			<font size="3px"><c:out value="${drug.description}" />
+   			<h3 align="left"><span style="color:#669900;"><a href ="controller.html?action=goodDetails&goodId=${drug.id}"><c:out value="${drug.drugName}" /></a></span></h3><br> 
+ 			<c:out value="${drug.description}" /><br>
     		<td align="center"><a href ="controller.html?action=edit&drugId=${drug.id}"><fmt:message key="admin.Update" bundle="${msgs}" /></a></td>
     		<td align="center"><a href ="controller.html?action=delete&drugId=${drug.id}"><fmt:message key="admin.Delete" bundle="${msgs}" /></a></td>
   		</tr>

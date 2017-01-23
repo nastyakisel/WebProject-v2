@@ -17,7 +17,7 @@
     		<td align="center"><img src="${drug.imagePath}" width="140" height="120"></td>
     		<td align="left">
    			<h3 align="left"><a href ="controller.html?action=goodDetails&goodId=${drug.id}"><c:out value="${drug.drugName}" /></a></h3><br>  
- 			<font size="3px"><c:out value="${drug.description}" />
+ 			<c:out value="${drug.description}" />
     		<td align="center"><a href ="controller.html?action=goodDetails&goodId=${drug.id}"><fmt:message key="details" bundle="${msgs}" /></a></td>
   		</tr>
   	</c:forEach>

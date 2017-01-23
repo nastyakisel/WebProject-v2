@@ -25,7 +25,7 @@
      		<td align="center"><img src="${drug.imagePath}" width="140" height="120"></td>
      		<td align="left">
     			<h3 align="left"><a href ="controller.html?action=goodDetails&goodId=${drug.id}"><span style="color:#669900;"><c:out value="${drug.drugName}" /></span></a></h3><br> 
-  			<font size="3px"><c:out value="${drug.description}" />
+  			<c:out value="${drug.description}" />
  
   			<td><c:out value = "${drug.quantity}"/></td>
   			<td><c:out value="${drug.price}" /></td>
@@ -45,8 +45,6 @@
  <br>
     </div>
   </div>
-  
-  
       <br>	  
       
    </div> 

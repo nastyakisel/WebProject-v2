@@ -36,7 +36,14 @@ public class GetRecipeDetailsCommand implements Command {
 
 		HttpSession session = request.getSession();
 		String recipeId = request.getParameter("recipeId");
-		
+		Integer userId = (Integer) session.getAttribute("userId");
+		User user = null;
+		try {
+			user = userService.getUserById(userId);
+		} catch (ServiceException e1) {
+			LOGGER.error("Failed receiving the user", e1);
+		}
+		Integer role = user.getRoleId();
 		Recipe recipe = null;
 		List<Drug> drugListInRecipe = new ArrayList<>();
 		User userInRecipe = new User();
@@ -53,6 +60,11 @@ public class GetRecipeDetailsCommand implements Command {
 		session.setAttribute("recipe", recipe);
 		session.setAttribute("userInRecipe", userInRecipe);
 		session.setAttribute("drugListInRecipe", drugListInRecipe);
-		response.sendRedirect("recipeDetails.jsp");
+		if(role == 1) {
+		response.sendRedirect("userRecipeDetails.jsp");
+		}
+		if(role == 3) {
+			response.sendRedirect("recipeDetails.jsp");
+			}
 	}
 }

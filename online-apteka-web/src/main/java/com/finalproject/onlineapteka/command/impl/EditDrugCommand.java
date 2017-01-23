@@ -2,7 +2,6 @@ package com.finalproject.onlineapteka.command.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,67 +30,37 @@ public class EditDrugCommand implements Command {
 		
 		HttpSession session = request.getSession();
 		RequestDispatcher dispatcher;
+		String prevURI = request.getHeader("referer");
+		List<String> inputList = new ArrayList<String>();
 		
 		String goodId = request.getParameter("good_id");
+		inputList.add(goodId);
 		String goodName = request.getParameter("good_name");
+		inputList.add(goodName);
 		String description = request.getParameter("good_descr");
+		inputList.add(description);
 		String goodDosage = request.getParameter("dosage");
+		inputList.add(goodDosage);
 		String instruction = request.getParameter("instruction");
+		inputList.add(instruction);
 		String goodPrice = request.getParameter("price");
+		inputList.add(goodPrice);
 		String goodQuantity = request.getParameter("quantity");
+		inputList.add(goodQuantity);
 		String goodRecipe =  request.getParameter("recipe");
+		inputList.add(goodRecipe);
 		String imagePath = request.getParameter("image");
+		inputList.add(imagePath);
 		String goodCategoryId = request.getParameter("cat_id");
-			
-		List<ErrorBean> errors = new ArrayList<ErrorBean>();
+		inputList.add(goodCategoryId);
 		
-		if (goodName.isEmpty()) {
-			ErrorBean emptyName = new ErrorBean("addGood.emptyName.error");
-			errors.add(emptyName);
-		}
+		List<ErrorBean> errors = validateInput(inputList);
 		
-		if (description.isEmpty()) {
-			ErrorBean emptyDescription = new ErrorBean("addGood.emptyDescription.error");
-			errors.add(emptyDescription);
-		}
-		
-		if (goodDosage.isEmpty()) {
-			ErrorBean emptyDosage = new ErrorBean("addGood.emptyDosage.error");
-			errors.add(emptyDosage);
-		}
-		
-		if (instruction.isEmpty()) {
-			ErrorBean emptyInstruction = new ErrorBean("addGood.emptyInstruction.error");
-			errors.add(emptyInstruction);
-		}
-		if (goodPrice.isEmpty()) {
-			ErrorBean emptyGoodPrice = new ErrorBean("addGood.emptyGoodPrice.error");
-			errors.add(emptyGoodPrice);
-		}
-		
-		if (goodQuantity.isEmpty()) {
-			ErrorBean emptyGoodQuantity = new ErrorBean("addGood.emptyGoodQuantity.error");
-			errors.add(emptyGoodQuantity);
-		}
-		if (goodRecipe.isEmpty()) {
-			ErrorBean emptyGoodRecipe = new ErrorBean("addGood.emptyGoodRecipe.error");
-			errors.add(emptyGoodRecipe);
-		}
-		
-		if (imagePath.isEmpty()) {
-			ErrorBean emptyPassword = new ErrorBean("addGood.emptyGoodRecipe.error");
-			errors.add(emptyPassword);
-		}
-		if (goodCategoryId.isEmpty()) {
-			ErrorBean emptyGoodCategoryId = new ErrorBean("addGood.emptyGoodCategoryId.error");
-			errors.add(emptyGoodCategoryId);
-		}
-		
+		session.setAttribute("has_errors", null);
 		if (!errors.isEmpty()) {
-			dispatcher = request.getRequestDispatcher("addGood.jsp");
-			dispatcher.forward(request, response);
+			session.setAttribute("has_errors", errors);
+			response.sendRedirect(prevURI);
 		}
-		
 		else {
 		
 		Drug drug = new Drug();
@@ -114,8 +83,18 @@ public class EditDrugCommand implements Command {
 				LOGGER.error("Failed adding the good", e);
 			}
 			
-		String previousURL = request.getParameter("previousURI");
-		response.sendRedirect(previousURL);
+		response.sendRedirect(prevURI);
 	}
+	}
+	private List<ErrorBean> validateInput(List<String> inputList) {
+		List<ErrorBean> errors = new ArrayList<ErrorBean>();
+		for (int i = 0; i < inputList.size(); i++) {
+			if (inputList.get(i).isEmpty()) {
+				ErrorBean emptyInput = new ErrorBean();
+				errors.add(emptyInput);
+			}
+		}
+
+		return errors;
 	}
 }

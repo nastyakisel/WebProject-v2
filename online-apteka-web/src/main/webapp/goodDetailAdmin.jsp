@@ -4,7 +4,7 @@
 
 <!DOCTYPE html>
 
-<%@ include file="header.jsp" %>
+<%@ include file="headerAdm.jsp" %>
  <div id="wrapper">
   <div id="main">
   
@@ -18,7 +18,7 @@
     		<td align="center"><img src="${drug.imagePath}" width="140" height="120"></td>
     		<td align="left">
    			<h3 align="left"><span style="color:#669900;"><c:out value="${drug.drugName}" /></span></h3><br> 
- 			<c:out value="${drug.description}" />
+ 			<font size="3px"><c:out value="${drug.description}" />
  			<td align="center"><h3><span style="color:#669900;"><fmt:message key="price" bundle="${msgs}" /></span></h3><br>
  			<c:out value="${drug.price}" />
  			</td>
@@ -26,26 +26,28 @@
   		<tr>
     		<td align="center"></td>
     		<td align="left">
- 			<c:out value="${drug.dosage}" /><br>
- 			<c:out value="${drug.instruction}" /></td>
+ 			<b><fmt:message key="admin.Dosage" bundle="${msgs}" />:</b>
+ 			<font size="3px"><c:out value="${drug.dosage}" /><br>
+ 			<font size="3px"><c:out value="${drug.instruction}" /></font></font></td>
  			<td>
- 			<form method="post" action="controller.html">
- 				<input type="hidden" name="action" value="addGoodtoCart" />
- 				<input type="hidden" name="drugId" value="${drug.id}" />
- 				<input type="submit" name="addCart_but" value="<fmt:message key="cart.add" bundle="${msgs}" />" onclick="this.value='Скрипт сработал'"  />
- 				<!-- <input type="button" value="Перейти в корзину" onClick='location.href="cart.jsp"'>->
- 				<a href = "controller.html?action=getFromCart"><fmt:message key="cart.go" bundle="${msgs}" /></a>-->
- 				<c:if test="${sessionScope.has_errors != null}">
- 					<c:if test="${sessionScope.has_errors == drug.id}">
- 					<span class="errorText">
-							<fmt:message key="cartPage.drugExists" bundle="${msgs}" />
-						</span>
- 					</c:if>
- 					
- 				</c:if>
- 				
- 			</form>
+ 			<align="center"><a href ="controller.html?action=edit&drugId=${drug.id}"><fmt:message key="admin.Update" bundle="${msgs}" /></a>
+ 			<td align="center"><a href ="controller.html?action=delete&drugId=${drug.id}"><fmt:message key="admin.Delete" bundle="${msgs}" /></a></td>
  			 </td>
+  		</tr><td align="center"></td>
+  		<tr><td align="center"></td>
+  		<td><b><fmt:message key="admin.Recipe" bundle="${msgs}" />:</b><br> 
+  		<c:if test="${drug.needRecipe == 0}">  
+  		<fmt:message key="admin.noResipe" bundle="${msgs}" />
+  		</c:if>
+  		<c:if test="${drug.needRecipe == 1}">
+  		<fmt:message key="admin.isResipe" bundle="${msgs}" />
+  		</c:if>
+  		</td>
+  		</tr>
+  		<tr><td align="center"></td>
+  		<td><b><fmt:message key="admin.Rest" bundle="${msgs}" /></b><br>
+  		<c:out value="${drug.quantity}" />
+  		</td>
   		</tr>
 	</table>
 <br>
@@ -61,7 +63,7 @@
     <div id="menuLeft">
             <ul>
             	<c:forEach items="${category_List}" var="category">
-              		<li><a href="controller.html?action=getGoodsByCategory&catId=${category.id}"><c:out value="${category.categoryName}" /></a></li>
+              		<li><a href="controller.html?action=getGoodsByCategoryAdm&catId=${category.id}"><c:out value="${category.categoryName}" /></a></li>
                 </c:forEach>
             </ul>
 	 <br>

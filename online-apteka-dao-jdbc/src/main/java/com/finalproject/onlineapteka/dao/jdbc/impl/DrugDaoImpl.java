@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import com.finalproject.onlineapteka.dao.jdbc.impl.db.DbPool;
 public class DrugDaoImpl implements DrugDao {
 	private static final String SELECT_ALL_GOODS = "SELECT* FROM drug";
 
-	private static final String SELECT_ALL_GOODS_BY_LOCALE = "SELECT drug_locale.*, drug.* FROM drug LEFT JOIN drug_locale ON drug.id =drug_locale.id_drug WHERE drug_locale.locale =?";
+	private static final String SELECT_ALL_GOODS_BY_LOCALE = "SELECT drug_locale.*, drug.* FROM drug LEFT JOIN drug_locale ON drug.id =drug_locale.id_drug WHERE drug_locale.locale =? and drug.quantity >= '1'";
 
 	private static final String SELECT_DRUGS_BY_CAT = "SELECT* FROM drug WHERE FK_CATEGORY_ID=?";
 
@@ -33,9 +34,14 @@ public class DrugDaoImpl implements DrugDao {
 
 	private static final String INSERT_GOOD = "INSERT INTO drug(drugname, description, dosage, "
 			+ "instruction, price, quantity, need_recipe, image_path, FK_CATEGORY_ID) VALUES (?,?,?,?,?,?,?,?,?)";
-
+	
+	private static final String INSERT_GOOD_LOCALE = "INSERT INTO drug_locale(drugname, description, dosage, "
+			+ "instruction, price, quantity, need_recipe, image_path, FK_CATEGORY_ID) VALUES (?,?,?,?,?,?,?,?,?)";
+	
 	private static final String UPDATE_GOOD = "UPDATE drug SET drugname=?, description=?, dosage=?, instruction=?,"
 			+ "price=?, quantity=?, need_recipe=?, image_path=?, FK_CATEGORY_ID=? WHERE id =?";
+	
+	private static final String DELETE_DRUG = "DELETE FROM drug WHERE id=?";
 
 	@Override
 	public List<Drug> loadAllDrugs() throws DAOException {
@@ -236,7 +242,26 @@ public class DrugDaoImpl implements DrugDao {
 	public void saveDrug(Drug drug) throws DAOException {
 		try (Connection connection = DbPool.getPool().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement(INSERT_GOOD)) {
+						.prepareStatement(INSERT_GOOD, Statement.RETURN_GENERATED_KEYS)) {
+			statement.setString(1, drug.getDrugName());
+			statement.setString(2, drug.getDescription());
+			statement.setString(3, drug.getDosage());
+			statement.setString(4, drug.getInstruction());
+			statement.setBigDecimal(5, drug.getPrice());
+			statement.setFloat(6, drug.getQuantity());
+			statement.setInt(7, drug.getNeedRecipe());
+			statement.setString(8, drug.getImagePath());
+			statement.setInt(9, drug.getCategoryId());
+			statement.executeUpdate();
+
+		} catch (InterruptedException | SQLException e) {
+			throw new DAOException(e);
+		}
+	}
+	public void saveDrug(Drug drug, String locale, Integer id) throws DAOException {
+		try (Connection connection = DbPool.getPool().getConnection();
+				PreparedStatement statement = connection
+						.prepareStatement(INSERT_GOOD_LOCALE)) {
 			statement.setString(1, drug.getDrugName());
 			statement.setString(2, drug.getDescription());
 			statement.setString(3, drug.getDosage());
@@ -269,6 +294,17 @@ public class DrugDaoImpl implements DrugDao {
 			statement.setInt(9, drug.getCategoryId());
 			statement.setInt(10, drug.getId());
 
+			statement.executeUpdate();
+		} catch (InterruptedException | SQLException e) {
+			throw new DAOException(e);
+		}
+	}
+	@Override
+	public void deleteDrug(Integer drugId) throws DAOException {
+		try (Connection connection = DbPool.getPool().getConnection();
+				PreparedStatement statement = connection
+						.prepareStatement(DELETE_DRUG)) {
+			statement.setInt(1, drugId);
 			statement.executeUpdate();
 		} catch (InterruptedException | SQLException e) {
 			throw new DAOException(e);

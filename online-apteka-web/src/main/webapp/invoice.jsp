@@ -10,8 +10,7 @@
    
     	<div id="container">
  			<div id="content">
- 			
-            
+ 			      
    <table width="98%" border="0" cellspacing="1">
    	<h2><fmt:message key="invoice.Order" bundle="${msgs}" /></h2>
    <br />
@@ -26,6 +25,11 @@
      		<input type="hidden" name="action" value="makeOrder" />
      		<td align="center"><img src="${drug.imagePath}" width="140" height="120"></td>
      		<td align="left">
+     		<c:if test="${sessionScope.has_errors != null}">
+    			<c:if test="${sessionScope.wrongId == drug.id}">
+     		<b><fmt:message key="cartPage.quantity.Allert" bundle="${msgs}" /></b>
+     		</c:if>
+     		</c:if>
     			<h3 align="left"><a href ="controller.html?action=goodDetails&goodId=${drug.id}"><span style="color:#669900;"><c:out value="${drug.drugName}" /></span></a></h3><br> 
   			<font size="3px"><c:out value="${drug.description}" />
   			<input type="hidden" name="drugId" value="${drug.id}" />
@@ -49,10 +53,7 @@
  <br>
     </div>
   </div>
-  
-  
-      <br>	  
-      
+      <br>	   
    </div> 
       
    </div>

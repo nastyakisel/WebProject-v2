@@ -1,6 +1,7 @@
 package com.finalproject.onlineapteka.dao.jdbc.impl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +20,9 @@ public class RecipeDetailDaoImpl implements RecipeDetailDao {
 
 	private static final String INSERT_RECIPEDETAIL = "INSERT INTO recipedetail(dosage, quantity, FK_DRUG_TO_RECIPE, FK_Recipe_ID) VALUES (?,?,?,?)";
 
-	private static final String SELECT_GRUGS_FROM_RECIPE = "SELECT* FROM recipedetail WHERE FK_Recipe_ID=?";
+	private static final String SELECT_DRUGS_BY_RECIPE_ID = "SELECT* FROM recipedetail WHERE FK_Recipe_ID=?";
+	
+	private static final String SELECT_DRUGS_BY_USER_ID = "SELECT FK_Recipe_ID FROM recipedetail WHERE FK_Recipe_ID in (SELECT ID FROM Recipe where FK_USER_TO_RECIPE = ? and END_DATE >= ? and FK_DRUG_TO_RECIPE=? and quantity >=?)";
 
 	@Override
 	public void saveRecipeDetail(RecipeDetail recipeDetail) throws DAOException {
@@ -46,7 +49,7 @@ public class RecipeDetailDaoImpl implements RecipeDetailDao {
 		List<Drug> drugList = new ArrayList<>();
 		try (Connection connection = DbPool.getPool().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement(SELECT_GRUGS_FROM_RECIPE)) {
+						.prepareStatement(SELECT_DRUGS_BY_RECIPE_ID)) {
 			statement.setInt(1, recipeId);
 			try (ResultSet resultSet = statement.executeQuery()) {
 
@@ -62,5 +65,30 @@ public class RecipeDetailDaoImpl implements RecipeDetailDao {
 			throw new DAOException(e);
 		}
 		return drugList;
+	}
+	@Override
+	public List<Integer> loadDrugsByUserId(Integer userId, Date endDate, Integer drugId, Float quantity) throws DAOException {
+
+		List<Integer> recipeList = new ArrayList<>();
+		try (Connection connection = DbPool.getPool().getConnection();
+				PreparedStatement statement = connection
+						.prepareStatement(SELECT_DRUGS_BY_USER_ID)) {
+			statement.setInt(1, userId);
+			statement.setDate(2, endDate);
+			statement.setInt(3, drugId);
+			statement.setFloat(4, quantity);
+			
+			try (ResultSet resultSet = statement.executeQuery()) {
+
+				while (resultSet.next()) {
+					Integer recipeId = 0;
+					recipeId = resultSet.getInt(1);
+					recipeList.add(recipeId);
+				}
+			}
+		} catch (InterruptedException | SQLException e) {
+			throw new DAOException(e);
+		}
+		return recipeList;
 	}
 }

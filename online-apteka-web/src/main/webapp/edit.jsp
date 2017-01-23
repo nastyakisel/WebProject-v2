@@ -4,13 +4,18 @@
 
 <!DOCTYPE html>
 <body>
-<%@ include file="headerPharm.jsp" %>
+<%@ include file="headerAdm.jsp" %>
 
 <div id="wrapper">
 
 	<div class="registration">
 		<form method="post" action="controller.html" >
-		
+		<c:if test="${has_errors != null}">
+						<span class="errorText">
+							<fmt:message key="addGood.errorMessage" bundle="${msgs}" />
+						</span>
+			</c:if>
+			<br />
 			<input type="hidden" name="action" value="editGood" />
 			<input type="hidden" name="previousURI" value="${previousURI}" />
 

@@ -2,7 +2,6 @@ package com.finalproject.onlineapteka.service.impl;
 
 import java.util.List;
 
-import com.finalproject.onlineapteka.bean.Cart;
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.dao.DrugDao;
 import com.finalproject.onlineapteka.dao.exception.DAOException;
@@ -135,6 +134,19 @@ public class DrugServiceImpl implements DrugService {
 
 		try {
 			drugDao.alterDrug(drug);;
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
+	}
+	@Override
+	public void removeDrug(Integer drugId) throws ServiceException {
+		if(drugId == null) {
+			throw new ServiceException("Empty drugId!");
+		}
+		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
+
+		try {
+			drugDao.deleteDrug(drugId);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}

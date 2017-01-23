@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.finalproject.onlineapteka.bean.Drug;
-import com.finalproject.onlineapteka.bean.Recipe;
 import com.finalproject.onlineapteka.bean.RecipeDetail;
-import com.finalproject.onlineapteka.dao.RecipeDao;
 import com.finalproject.onlineapteka.dao.RecipeDetailDao;
 import com.finalproject.onlineapteka.dao.exception.DAOException;
 import com.finalproject.onlineapteka.dao.factories.DAOFactoryImpl;
@@ -38,5 +36,16 @@ public class RecipeDetailServiceImpl implements RecipeDetailService{
 		}
 		return drugList;
 	}
-	
+	@Override
+	public List<Integer> getDrugsFromRecipeByUser(Integer userId, Date endDate, Integer drugId, Float quantity) throws ServiceException {
+		RecipeDetailDao recipeDetailDao = DAOFactoryImpl.getInstance().getRecipeDetailDao();
+		List<Integer> recipeList = new ArrayList<>();
+
+		try {
+			recipeList = recipeDetailDao.loadDrugsByUserId(userId, endDate, drugId, quantity);
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
+		return recipeList;
+	}
 }

@@ -54,6 +54,7 @@ public class GetDrugsFromCartCommand implements Command {
 			} catch (ServiceException e) {
 				LOGGER.error("Failed receiving from cart", e);
 			}
+			session.setAttribute("has_errors", null);
 			session.setAttribute("shoppingCart", shoppingCart);
 			RequestDispatcher dispatcher = request
 					.getRequestDispatcher("cart.jsp");

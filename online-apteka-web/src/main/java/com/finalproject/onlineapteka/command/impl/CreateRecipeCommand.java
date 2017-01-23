@@ -2,6 +2,8 @@ package com.finalproject.onlineapteka.command.impl;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.finalproject.onlineapteka.bean.ErrorBean;
 import com.finalproject.onlineapteka.bean.Recipe;
 import com.finalproject.onlineapteka.bean.RecipeDetail;
 import com.finalproject.onlineapteka.bean.User;
@@ -35,12 +38,14 @@ public class CreateRecipeCommand implements Command {
 				.getRecipeDetailService();
 
 		HttpSession session = request.getSession();
+		String prevURI = request.getHeader("referer");
 		Integer userId = (Integer) session.getAttribute("userId");
 		String previousURI = request.getHeader("referer");
 		User doctor = (User) session.getAttribute("doctorUser");
 		User selectedUser =(User) session.getAttribute("selectedUser");
 		
 		Integer recipeId = (Integer) session.getAttribute("recipeId");
+		List<String> inputList = new ArrayList<String>();
 		if (recipeId == null) {
 
 			Integer userIdForRecipe = Integer.parseInt(request
@@ -52,7 +57,15 @@ public class CreateRecipeCommand implements Command {
 			}
 			String beginDate = request.getParameter("begin_date");
 			String endDate = request.getParameter("end_date");
-
+			inputList.add(beginDate);
+			inputList.add(endDate);
+			List<ErrorBean> errors = validateInput(inputList);
+			if (!errors.isEmpty()) {
+				session.setAttribute("has_errors", errors);
+				response.sendRedirect(prevURI);
+				return;
+			}
+			
 			Recipe recipe = new Recipe();
 			recipe.setDoctorName(doctor.getUserName());
 			recipe.setBeginDate(Date.valueOf(beginDate));
@@ -68,7 +81,15 @@ public class CreateRecipeCommand implements Command {
 		String selectedDrugId = request.getParameter("selectedDrug");
 		String dosage = request.getParameter("dosage");
 		String quantity = request.getParameter("quantity");
-
+		inputList.add(dosage);
+		inputList.add(quantity);
+		List<ErrorBean> errors = validateInput(inputList);
+		
+		if (!errors.isEmpty()) {
+			session.setAttribute("has_errors", errors);
+			response.sendRedirect(prevURI);
+			return;
+		}		
 		RecipeDetail recipeDetail = new RecipeDetail();
 		recipeDetail.setDosage(dosage);
 		recipeDetail.setQuantity(Float.valueOf(quantity));
@@ -86,5 +107,16 @@ public class CreateRecipeCommand implements Command {
 		session.setAttribute("previousURI", previousURI);
 		response.sendRedirect("assignRecipe_2.jsp");
 
+	}
+	private List<ErrorBean> validateInput(List<String> inputList) {
+		List<ErrorBean> errors = new ArrayList<ErrorBean>();
+		for (int i = 0; i < inputList.size(); i++) {
+			if (inputList.get(i).isEmpty()) {
+				ErrorBean emptyInput = new ErrorBean();
+				errors.add(emptyInput);
+			}
+		}
+
+		return errors;
 	}
 }

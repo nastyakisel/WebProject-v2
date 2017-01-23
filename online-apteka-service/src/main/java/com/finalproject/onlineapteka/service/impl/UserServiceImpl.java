@@ -1,6 +1,5 @@
 package com.finalproject.onlineapteka.service.impl;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +11,9 @@ import com.finalproject.onlineapteka.service.UserService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 
 public class UserServiceImpl implements UserService {
-	
-	private static final Integer USER_ADDED = 1;
-	
+
 	private static final Integer USER_NOT_ADDED = 0;
-	
+
 	@Override
 	public User getUser(String userName, String password)
 			throws ServiceException {
@@ -34,8 +31,10 @@ public class UserServiceImpl implements UserService {
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
-		if(user.getPassword().equals(password)) {
-			return user;
+		if (user != null) {
+			if (user.getPassword().equals(password)) {
+				return user;
+			}
 		}
 		return null;
 	}
@@ -45,19 +44,20 @@ public class UserServiceImpl implements UserService {
 		UserDao userDao = DAOFactoryImpl.getInstance().getUserDao();
 
 		if (user.getUserName().isEmpty()) {
-			throw new ServiceException("Empty name");
+			throw new ServiceException("Empty login!");
 		}
 		if (user.getPassword().isEmpty()) {
-			throw new ServiceException("Empty password");
+			throw new ServiceException("Empty password!");
 		}
 		if (user.getFirstName().isEmpty()) {
-			throw new ServiceException("Empty password");
+			throw new ServiceException("Empty first name");
 		}
 		if (user.getSecondName().isEmpty()) {
-			throw new ServiceException("Empty password");
+			throw new ServiceException("Empty second name");
 		}
 
 		User receivedUser = null;
+		Integer userId = 0;
 		try {
 			receivedUser = userDao.loadUser(user.getUserName());
 		} catch (DAOException e) {
@@ -67,32 +67,32 @@ public class UserServiceImpl implements UserService {
 			return USER_NOT_ADDED;
 		} else {
 			try {
-				userDao.saveUser(user);
+				userId = userDao.saveUser(user);
 			} catch (DAOException e) {
 				throw new ServiceException(e);
 			}
 		}
-		return USER_ADDED;
+		return userId;
 	}
+
 	@Override
-	public User getUserById(Integer userId)
-			throws ServiceException {
+	public User getUserById(Integer userId) throws ServiceException {
 		UserDao userDao = DAOFactoryImpl.getInstance().getUserDao();
 
 		if (userId == 0) {
 			throw new ServiceException("Empty userId");
 		}
-		
+
 		User user = null;
 		try {
 			user = userDao.loadUserById(userId);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
-		
+
 		return user;
 	}
-	
+
 	@Override
 	public List<User> getUsersByRole(Integer role) throws ServiceException {
 		UserDao userDao = DAOFactoryImpl.getInstance().getUserDao();
@@ -100,14 +100,14 @@ public class UserServiceImpl implements UserService {
 		if (role == 0) {
 			throw new ServiceException("Empty userId");
 		}
-		
+
 		List<User> userList = new ArrayList<User>();
 		try {
 			userList = userDao.loadUsersByRole(role);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
-		
+
 		return userList;
 	}
 }

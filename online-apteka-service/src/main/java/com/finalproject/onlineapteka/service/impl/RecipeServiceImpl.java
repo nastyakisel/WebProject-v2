@@ -1,6 +1,7 @@
 package com.finalproject.onlineapteka.service.impl;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.finalproject.onlineapteka.bean.Recipe;
@@ -15,7 +16,7 @@ public class RecipeServiceImpl implements RecipeService{
 	@Override
 	public List<Recipe> getAllRecipes() throws ServiceException {
 		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
-		List<Recipe> recipeList = null;
+		List<Recipe> recipeList = new ArrayList<Recipe>();
 
 		try {
 			recipeList = recipeDao.loadAllRecipes();
@@ -38,6 +39,18 @@ public class RecipeServiceImpl implements RecipeService{
 		return recipe;
 	}
 	@Override
+	public List<Recipe> getRecipesByUser(Integer userId) throws ServiceException {
+		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
+		List<Recipe> recipeList = new ArrayList<Recipe>();
+
+		try {
+			recipeList = recipeDao.loadRecipesByUser(userId);
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
+		return recipeList;
+	}
+	@Override
 	public Integer addRecipe(Recipe recipe) throws ServiceException {
 		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
 		Integer recipeId = null;
@@ -50,11 +63,11 @@ public class RecipeServiceImpl implements RecipeService{
 	}
 	
 	@Override
-	public void updateRecipe(Date endDate, Integer drugId) throws ServiceException {
+	public void updateRecipe(Date endDate, Integer recipeId) throws ServiceException {
 		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
 		
 		try {
-			recipeDao.alterRecipe(endDate, drugId);
+			recipeDao.alterRecipe(endDate, recipeId);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}

@@ -14,9 +14,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.finalproject.onlineapteka.bean.Category;
 import com.finalproject.onlineapteka.bean.Drug;
+import com.finalproject.onlineapteka.bean.User;
 import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.CategoryService;
 import com.finalproject.onlineapteka.service.DrugService;
+import com.finalproject.onlineapteka.service.UserService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
@@ -49,6 +51,24 @@ public class DrugDetailsCommand implements Command {
 
 		request.setAttribute("drug", recievedDrug);
 		request.setAttribute("category_List", categoryList);
+		
+		Integer userId = (Integer) session.getAttribute("userId");
+		if(userId != null) {
+			UserService userService = ServiceFactory.getInstance().getUserService();
+			User user = null;
+			try {
+				user = userService.getUserById(userId);
+			} catch (ServiceException e) {
+				LOGGER.error("Failed receiving the user", e);
+			}
+			if (user.getRoleId() == 2) {
+				RequestDispatcher dispatcher = request
+						.getRequestDispatcher("goodDetailAdmin.jsp");
+				dispatcher.forward(request, response);
+				return;
+			}
+		}
+		
 		RequestDispatcher dispatcher = request
 				.getRequestDispatcher("goodDetail.jsp");
 		dispatcher.forward(request, response);

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,10 +67,10 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public void saveUser(User user) throws DAOException {
+	public Integer saveUser(User user) throws DAOException {
 		try (Connection connection = DbPool.getPool().getConnection();
 				PreparedStatement statement = connection
-						.prepareStatement(INSERT_USER)) {
+						.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
 
 			statement.setString(1, user.getUserName());
 			statement.setString(2, user.getPassword());
@@ -77,7 +78,11 @@ public class UserDaoImpl implements UserDao {
 			statement.setString(4, user.getFirstName());
 			statement.setString(5, user.getSecondName());
 			statement.executeUpdate();
-
+			
+			try (ResultSet resultSet = statement.getGeneratedKeys()) {
+				resultSet.next();
+				return resultSet.getInt(1);
+			}
 		} catch (InterruptedException | SQLException e) {
 			LOGGER.error("Error occurs while saving the user", e);
 			throw new DAOException(e);

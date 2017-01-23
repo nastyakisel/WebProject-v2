@@ -1,7 +1,6 @@
 package com.finalproject.onlineapteka.command.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,12 +15,9 @@ import org.apache.logging.log4j.Logger;
 
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.ErrorBean;
-import com.finalproject.onlineapteka.bean.Recipe;
 import com.finalproject.onlineapteka.bean.User;
 import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.CartService;
-import com.finalproject.onlineapteka.service.DrugService;
-import com.finalproject.onlineapteka.service.RecipeService;
 import com.finalproject.onlineapteka.service.UserService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
@@ -45,7 +41,7 @@ public class LoginCommand implements Command {
 		if (requestLocale == null) {
 			requestLocale = "ru";
 		}
-
+		String prevURL = request.getHeader("referer");
 		UserService userService = ServiceFactory.getInstance().getUserService();
 		User receivedUser = null;
 
@@ -55,12 +51,13 @@ public class LoginCommand implements Command {
 			LOGGER.error("Failed receiving the user", e);
 		}
 
-		List<ErrorBean> userErrors = validateUser(receivedUser);
+		ErrorBean userError = validateUser(receivedUser);
 
-		if (!userErrors.isEmpty()) {
-			session.setAttribute("has_errors", userErrors);
+		session.setAttribute("has_error", null);
+		if (userError != null) {
+			session.setAttribute("has_error", userError);
 			session.setAttribute("current_user", user);
-			response.sendRedirect("login.jsp");
+			response.sendRedirect(prevURL);
 
 			return;
 		}
@@ -95,10 +92,8 @@ public class LoginCommand implements Command {
 				} catch (ServiceException e) {
 					LOGGER.error("Failed adding drug to cart", e);
 				}
-
 			}
 		}
-
 		Integer roleId = receivedUser.getRoleId();
 
 		if (roleId == 3) { // doctor
@@ -110,7 +105,6 @@ public class LoginCommand implements Command {
 		else {
 			response.sendRedirect(getURI(roleId));
 		}
-
 	}
 
 	public String getURI(Integer role) {
@@ -124,13 +118,11 @@ public class LoginCommand implements Command {
 
 	}
 
-	private List<ErrorBean> validateUser(User user) {
-		List<ErrorBean> errors = new ArrayList<ErrorBean>();
+	private ErrorBean validateUser(User user) {
+		ErrorBean error = null;
 		if (user == null) {
-			ErrorBean errorName = new ErrorBean("loginPage.errorUser");
-			errors.add(errorName);
+			error = new ErrorBean("loginPage.errorUser");
 		}
-
-		return errors;
+		return error;
 	}
 }
