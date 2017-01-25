@@ -5,38 +5,36 @@ import java.util.Map;
 
 import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.command.impl.AddCommand;
-import com.finalproject.onlineapteka.command.impl.AdminCommand;
-import com.finalproject.onlineapteka.command.impl.DeleteCommand;
-import com.finalproject.onlineapteka.command.impl.DoctorCommand;
-import com.finalproject.onlineapteka.command.impl.GetAllDrugsSessionCommand;
-import com.finalproject.onlineapteka.command.impl.GetCategoriesCommand;
-import com.finalproject.onlineapteka.command.impl.GetRecipeDetailsCommand;
-import com.finalproject.onlineapteka.command.impl.GetUserRecipesCommand;
-import com.finalproject.onlineapteka.command.impl.ProlongRecipeCommand;
 import com.finalproject.onlineapteka.command.impl.AddDrugCommand;
 import com.finalproject.onlineapteka.command.impl.AddDrugToCartCommand;
+import com.finalproject.onlineapteka.command.impl.AdminCommand;
 import com.finalproject.onlineapteka.command.impl.AssignRecipeCommand;
 import com.finalproject.onlineapteka.command.impl.CheckCartCommand;
 import com.finalproject.onlineapteka.command.impl.CreateRecipeCommand;
+import com.finalproject.onlineapteka.command.impl.DeleteCommand;
+import com.finalproject.onlineapteka.command.impl.DoctorCommand;
+import com.finalproject.onlineapteka.command.impl.DrugDetailsCommand;
 import com.finalproject.onlineapteka.command.impl.EditCommand;
 import com.finalproject.onlineapteka.command.impl.EditDrugCommand;
 import com.finalproject.onlineapteka.command.impl.GetAllDrugsCommand;
-import com.finalproject.onlineapteka.command.impl.GetDrugsFromCartCommand;
+import com.finalproject.onlineapteka.command.impl.GetCategoriesCommand;
 import com.finalproject.onlineapteka.command.impl.GetDrugsByCategoryAdmCommand;
 import com.finalproject.onlineapteka.command.impl.GetDrugsByCategoryCommand;
+import com.finalproject.onlineapteka.command.impl.GetDrugsFromCartCommand;
 import com.finalproject.onlineapteka.command.impl.GetOrderDetailsCommand;
 import com.finalproject.onlineapteka.command.impl.GetOrdersCommand;
-import com.finalproject.onlineapteka.command.impl.DrugDetailsCommand;
+import com.finalproject.onlineapteka.command.impl.GetRecipeDetailsCommand;
+import com.finalproject.onlineapteka.command.impl.GetUserRecipesCommand;
 import com.finalproject.onlineapteka.command.impl.LocaleCommand;
 import com.finalproject.onlineapteka.command.impl.LogOutCommand;
 import com.finalproject.onlineapteka.command.impl.LoginCommand;
 import com.finalproject.onlineapteka.command.impl.MakeOrderCommand;
+import com.finalproject.onlineapteka.command.impl.ProlongRecipeCommand;
 import com.finalproject.onlineapteka.command.impl.RegistrationCommand;
 import com.finalproject.onlineapteka.command.impl.SearchDrugsCommand;
 
-
 public class CommandProvider {
-	private Map<String, Command> commands = new HashMap<String, Command>();
+private Map<String, Command> commands = new HashMap<>();
 	
 	CommandProvider() {
 		commands.put("login", new LoginCommand());

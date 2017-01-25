@@ -1,6 +1,10 @@
 package com.finalproject.onlineapteka.bean;
 
-public class Category {
+import java.io.Serializable;
+
+public class Category implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String categoryName;
 
@@ -26,6 +30,7 @@ public class Category {
 		int result = 1;
 		result = prime * result
 				+ ((categoryName == null) ? 0 : categoryName.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -43,6 +48,13 @@ public class Category {
 				return false;
 		} else if (!categoryName.equals(other.categoryName))
 			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
 		return true;
 	}
+
+	
 }

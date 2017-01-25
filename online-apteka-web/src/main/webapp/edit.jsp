@@ -11,10 +11,18 @@
 	<div class="registration">
 		<form method="post" action="controller.html" >
 		<c:if test="${has_errors != null}">
-						<span class="errorText">
-							<fmt:message key="addGood.errorMessage" bundle="${msgs}" />
-						</span>
+			<c:forEach items="${sessionScope.has_errors}" var="error">
+			<c:if test="${error.errorMessage == 'addGood.emptyField'}">
+						<c:set var="errorEmpty" value="addGood.emptyField" />
+						
+					</c:if>
+					</c:forEach>
 			</c:if>
+			<c:if test="${errorEmpty == 'addGood.emptyField'}">
+			<div class="errorText">
+							<fmt:message key="addGood.errorMessage" bundle="${msgs}" />
+						</div>
+						</c:if>
 			<br />
 			<input type="hidden" name="action" value="editGood" />
 			<input type="hidden" name="previousURI" value="${previousURI}" />
@@ -59,7 +67,15 @@
 				
 			<br />
 			<br />
-			
+			<c:if test="${has_errors != null}">
+				<c:forEach items="${sessionScope.has_errors}" var="error">
+				<c:if test="${error.errorMessage == 'goodPrice.not.number'}">
+						<div class="errorText">
+							<fmt:message key="goodPrice.not.number" bundle="${msgs}" />
+						</div>
+					</c:if>
+					</c:forEach>
+			</c:if>
 			<fmt:message key="admin.Price" bundle="${msgs}" />
 			<br />
 			<input type="text" id="price" name="price" value="<c:out value='${drug.price}' default=''  />"/>
@@ -67,6 +83,15 @@
 			<br />
 			<br />
 			
+			<c:if test="${has_errors != null}">
+				<c:forEach items="${sessionScope.has_errors}" var="error">
+				<c:if test="${error.errorMessage == 'goodQuantity.not.number'}">
+						<div class="errorText">
+							<fmt:message key="goodQuantity.not.number" bundle="${msgs}" />
+						</div>
+					</c:if>
+					</c:forEach>
+			</c:if>
 			<fmt:message key="admin.Quantity" bundle="${msgs}" /> 
 			<br />
 			<input type="text" id="quantity" name="quantity" value="<c:out value='${drug.quantity}' default=''  />"/>

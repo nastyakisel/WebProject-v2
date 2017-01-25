@@ -1,31 +1,26 @@
 package com.finalproject.onlineapteka.command.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.ErrorBean;
 import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.DrugService;
-import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
-public class AddDrugCommand implements Command {
-	private static final Logger LOGGER = LogManager.getLogger(AddDrugCommand.class
-			.getName());
-
-	public void execute(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+public class AddDrugCommand extends Command {
+	
+	public void handle(HttpServletRequest request, HttpServletResponse response, String requestLocale)
+			throws Exception {
 
 		HttpSession session = request.getSession();
 		String prevURI = request.getHeader("referer");
@@ -75,27 +70,45 @@ public class AddDrugCommand implements Command {
 			response.sendRedirect(prevURI);
 			return;
 		}
-
+		
 		Drug drug = new Drug();
 		drug.setDrugName(goodName);
 		drug.setDescription(description);
 		drug.setDosage(goodDosage);
 		drug.setInstruction(instruction);
+		if (!NumberUtils.isNumber(goodPrice)){
+			ErrorBean notNumber = new ErrorBean("goodPrice.not.number");
+			errors.add(notNumber);
+			session.setAttribute("has_errors", errors);
+			response.sendRedirect(prevURI);
+			return;
+		}
 		drug.setPrice(BigDecimal.valueOf(Double.valueOf(goodPrice)));
+		if (!NumberUtils.isNumber(goodQuantity)){
+			ErrorBean notNumber = new ErrorBean("goodQuantity.not.number");
+			errors.add(notNumber);
+			session.setAttribute("has_errors", errors);
+			response.sendRedirect(prevURI);
+			return;
+		}
 		drug.setQuantity(Float.valueOf(goodQuantity));
 		drug.setNeedRecipe(Integer.parseInt(goodRecipe));
 		drug.setImagePath(imagePath);
+		
+		if (!NumberUtils.isNumber(goodCategoryId)){
+			ErrorBean notNumber = new ErrorBean("goodCategoryId.not.number");
+			errors.add(notNumber);
+			session.setAttribute("has_errors", errors);
+			response.sendRedirect(prevURI);
+			return;
+		}
 		drug.setCategoryId(Integer.parseInt(goodCategoryId));
 
 		DrugService service = (DrugService) ServiceFactory.getInstance()
-				.getGoodsService();
+				.getDrugService();
 
-		try {
-			service.addDrug(drug);
-		} catch (ServiceException e) {
-			LOGGER.error("Failed to add the good", e);
-		}
-
+		service.addDrug(drug);
+		
 		String previousURL = request.getParameter("previousURI");
 		response.sendRedirect(previousURL);
 	}
@@ -104,7 +117,7 @@ public class AddDrugCommand implements Command {
 		List<ErrorBean> errors = new ArrayList<ErrorBean>();
 		for (int i = 0; i < inputList.size(); i++) {
 			if (inputList.get(i).isEmpty()) {
-				ErrorBean emptyInput = new ErrorBean();
+				ErrorBean emptyInput = new ErrorBean("addGood.emptyField");
 				errors.add(emptyInput);
 			}
 		}

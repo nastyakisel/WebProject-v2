@@ -1,19 +1,12 @@
 package com.finalproject.onlineapteka.command.impl;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.finalproject.onlineapteka.bean.CustomOrder;
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.ErrorBean;
@@ -24,15 +17,13 @@ import com.finalproject.onlineapteka.service.DrugService;
 import com.finalproject.onlineapteka.service.OrderDetailService;
 import com.finalproject.onlineapteka.service.OrderService;
 import com.finalproject.onlineapteka.service.RecipeService;
-import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
-public class MakeOrderCommand implements Command {
-	private static final Logger LOGGER = LogManager
-			.getLogger(MakeOrderCommand.class.getName());
+public class MakeOrderCommand extends Command {
 
-	public void execute(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	public void handle(HttpServletRequest request,
+			HttpServletResponse response, String requestLocale)
+			throws Exception {
 		OrderService orderService = (OrderService) ServiceFactory.getInstance()
 				.getOrderService();
 		OrderDetailService orderDetailService = (OrderDetailService) ServiceFactory
@@ -40,16 +31,13 @@ public class MakeOrderCommand implements Command {
 		CartService cartService = (CartService) ServiceFactory.getInstance()
 				.getCartService();
 		DrugService drugService = (DrugService) ServiceFactory.getInstance()
-				.getGoodsService();
+				.getDrugService();
 		RecipeService recipeService = ServiceFactory.getInstance()
 				.getRecipeService();
 
 		HttpSession session = request.getSession();
 		String prevURL = request.getHeader("referer");
-		String requestLocale = (String) session.getAttribute("requestLocale");
-		if (requestLocale == null) {
-			requestLocale = "ru";
-		}
+
 		Integer userId = (Integer) session.getAttribute("userId");
 		List<Drug> shoppingCart = (List<Drug>) session
 				.getAttribute("shoppingCart");
@@ -66,23 +54,18 @@ public class MakeOrderCommand implements Command {
 		customOrder.setUserId(userId);
 		customOrder.setOrderStatus(0);
 		Integer customOrderId = 0;
-		try {
-			customOrderId = orderService.addOrder(customOrder);
-		} catch (ServiceException e) {
-			LOGGER.error("Failed to create the order", e);
-		}
+
+		customOrderId = orderService.addOrder(customOrder);
 
 		for (int i = 0; i < shoppingCart.size(); i++) {
 			OrderDetail orderDetail = new OrderDetail();
 			orderDetail.setDrugId(shoppingCart.get(i).getId());
 			Float quantity = shoppingCart.get(i).getQuantity();
 			Drug drug = null;
-			try {
-				drug = drugService.getDrugById(shoppingCart.get(i).getId(),
-						requestLocale);
-			} catch (ServiceException e) {
-				LOGGER.error("Failed receiving the drug", e);
-			}
+
+			drug = drugService.getDrugById(shoppingCart.get(i).getId(),
+					requestLocale);
+
 			if (quantity > drug.getQuantity()) {
 				ErrorBean errorBean = new ErrorBean("Incorrect quantity");
 				errors.add(errorBean);
@@ -98,46 +81,33 @@ public class MakeOrderCommand implements Command {
 			BigDecimal totalPriceOfGood = price.multiply(bigDecimalQuantity);
 			orderDetail.setTotalPriceOfGood(totalPriceOfGood);
 			orderDetail.setCustomOrderId(customOrderId);
-			try {
-				orderDetailService.addOrderDetail(orderDetail);
-			} catch (ServiceException e) {
-				LOGGER.error("Failed to create the orderDetail", e);
-			}
-			drug.setQuantity(drug.getQuantity()-quantity);
-			try {
-				drugService.editDrug(drug);
-			} catch (ServiceException e) {
-	
-			}
+
+			orderDetailService.addOrderDetail(orderDetail);
+
+			drug.setQuantity(drug.getQuantity() - quantity);
+
+			drugService.editDrug(drug);
+
 		}// for
 		session.setAttribute("shoppingCart", null);
-		// получить данные из заказа
-		try {
-			cartService.removeCart(userId);
-		} catch (ServiceException e) {
-			LOGGER.error("Failed to delete the cart", e);
-		}
-		
+
+		cartService.removeCart(userId);
+
 		Integer recipeId = (Integer) session.getAttribute("recipeId");
-		if(recipeId != null) {
+		if (recipeId != null) {
 			Date endDate = new Date(0);
-			try {
-				recipeService.updateRecipe(endDate, recipeId);;
-			} catch (ServiceException e) {
-				LOGGER.error("Failed updating the recipe", e);
-			}
+
+			recipeService.updateRecipe(endDate, recipeId);
 		}
-		
+
 		List<Drug> drugsInOrder = new ArrayList<>();
-		try {
-			drugsInOrder = orderDetailService
-					.getDrugsFromOrderDetail(customOrderId);
-		} catch (ServiceException e) {
-			LOGGER.error("Failed loading the drugs from orderDetail", e);
-		}
+
+		drugsInOrder = orderDetailService
+				.getDrugsFromOrderDetail(customOrderId);
+
 		session.setAttribute("drugsInOrder", drugsInOrder);
 		session.setAttribute("customOrderId", customOrderId);
 		session.setAttribute("totalPrice", totalPrice);
 		response.sendRedirect("orderConfirmation.jsp");
-	} // execute
+	} 
 }

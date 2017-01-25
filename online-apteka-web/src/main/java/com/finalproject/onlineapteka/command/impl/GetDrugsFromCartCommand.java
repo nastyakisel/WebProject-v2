@@ -1,40 +1,27 @@
 package com.finalproject.onlineapteka.command.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.CartService;
-import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
-public class GetDrugsFromCartCommand implements Command {
-	private static final Logger LOGGER = LogManager
-			.getLogger(GetDrugsFromCartCommand.class.getName());
+public class GetDrugsFromCartCommand extends Command {
 
-	public void execute(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		CartService cartService = ServiceFactory.getInstance()
- 				.getCartService();
+	public void handle(HttpServletRequest request,
+			HttpServletResponse response, String requestLocale)
+			throws Exception {
+
+		CartService cartService = ServiceFactory.getInstance().getCartService();
 
 		HttpSession session = request.getSession();
 		Integer userId = (Integer) session.getAttribute("userId");
-		String requestLocale = (String) session.getAttribute("requestLocale");
-		if (requestLocale == null) {
-			requestLocale = "ru";
-		}
 
 		if (userId == null) {
 			RequestDispatcher dispatcher = request
@@ -49,11 +36,9 @@ public class GetDrugsFromCartCommand implements Command {
 			if (shoppingCart == null) {
 				shoppingCart = new ArrayList<Drug>();
 			}
-			try {
-				shoppingCart = cartService.getDrugsFromCart(userId, requestLocale);
-			} catch (ServiceException e) {
-				LOGGER.error("Failed receiving from cart", e);
-			}
+
+			shoppingCart = cartService.getDrugsFromCart(userId, requestLocale);
+
 			session.setAttribute("has_errors", null);
 			session.setAttribute("shoppingCart", shoppingCart);
 			RequestDispatcher dispatcher = request

@@ -1,18 +1,12 @@
 package com.finalproject.onlineapteka.command.impl;
 
-import java.io.IOException;
+
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.finalproject.onlineapteka.bean.Cart;
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.ErrorBean;
@@ -22,15 +16,13 @@ import com.finalproject.onlineapteka.service.CartService;
 import com.finalproject.onlineapteka.service.DrugService;
 import com.finalproject.onlineapteka.service.RecipeDetailService;
 import com.finalproject.onlineapteka.service.UserService;
-import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
-public class CheckCartCommand implements Command {
-	private static final Logger LOGGER = LogManager
-			.getLogger(CheckCartCommand.class.getName());
+public class CheckCartCommand extends Command {
 
-	public void execute(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	public void handle(HttpServletRequest request,
+			HttpServletResponse response, String requestLocale)
+			throws Exception {
 
 		CartService cartService = ServiceFactory.getInstance().getCartService();
 		UserService userService = ServiceFactory.getInstance().getUserService();
@@ -38,10 +30,7 @@ public class CheckCartCommand implements Command {
 				.getRecipeDetailService();
 
 		HttpSession session = request.getSession();
-		String requestLocale = (String) session.getAttribute("requestLocale");
-		if (requestLocale == null) {
-			requestLocale = "ru";
-		}
+
 		String prevURL = request.getHeader("referer");
 		Integer userId = (Integer) session.getAttribute("userId");
 		List<Drug> shoppingCart = (List<Drug>) session
@@ -62,18 +51,13 @@ public class CheckCartCommand implements Command {
 					cart.setQuantity(Float.valueOf(drugQuantity[k]));
 					cart.setDrugId(Integer.parseInt(drugId[k]));
 					cart.setUserId(userId);
-					try {
-						cartService.changeCart(cart);
-					} catch (ServiceException e) {
-						LOGGER.error("Failed updating the cart", e);
-					}
+					cartService.changeCart(cart);
+
 				} // for
-				try {
-					shoppingCart = cartService.getDrugsFromCart(userId,
-							requestLocale);
-				} catch (ServiceException e) {
-					LOGGER.error("Failed receiving from the cart", e);
-				}
+
+				shoppingCart = cartService.getDrugsFromCart(userId,
+						requestLocale);
+
 				session.setAttribute("shoppingCart", shoppingCart);
 			} // if (userId != null)
 			else {
@@ -91,11 +75,11 @@ public class CheckCartCommand implements Command {
 		} // if (count != null)
 
 		if (delete != null) {
-			if(drugsToDelete == null) {
+			if (drugsToDelete == null) {
 				response.sendRedirect(prevURL);
 				return;
 			}
-			
+
 			if (userId == null) {
 
 				for (int i = 0; i < drugsToDelete.length; i++) {
@@ -110,14 +94,12 @@ public class CheckCartCommand implements Command {
 			else {
 
 				for (int i = 0; i < drugsToDelete.length; i++) {
-					try {
-						cartService.removeDrugFromCart(
-								Integer.parseInt(drugsToDelete[i]), userId);
-						shoppingCart = cartService.getDrugsFromCart(userId,
-								requestLocale);
-					} catch (NumberFormatException | ServiceException e) {
-						LOGGER.error("Failed delete from cart", e);
-					}
+
+					cartService.removeDrugFromCart(
+							Integer.parseInt(drugsToDelete[i]), userId);
+					shoppingCart = cartService.getDrugsFromCart(userId,
+							requestLocale);
+
 				}
 				session.setAttribute("shoppingCart", shoppingCart);
 			} // else
@@ -125,17 +107,15 @@ public class CheckCartCommand implements Command {
 		} // if (delete != null)
 
 		if (buy != null) {
-			DrugService drugService = (DrugService) ServiceFactory.getInstance()
-					.getGoodsService();
-			for (int i = 0; i < shoppingCart.size(); i++) {  //проходимс€ по shoppingCart
+			DrugService drugService = (DrugService) ServiceFactory
+					.getInstance().getDrugService();
+			for (int i = 0; i < shoppingCart.size(); i++) { 
 				Drug drug = null;
-				try {
-					drug = drugService.getDrugById(shoppingCart.get(i).getId(), requestLocale);
-				} catch (ServiceException e) {
-					LOGGER.error("Failed receiving the drug", e);
-				}
-				
-				if(shoppingCart.get(i).getQuantity() > drug.getQuantity()) {  // проверка,есть ли такое кол-во в базе
+
+				drug = drugService.getDrugById(shoppingCart.get(i).getId(),
+						requestLocale);
+
+				if (shoppingCart.get(i).getQuantity() > drug.getQuantity()) { 
 					ErrorBean errorBean = new ErrorBean("incorrect quantity");
 					errors.add(errorBean);
 					session.setAttribute("has_errors", errors);
@@ -144,43 +124,42 @@ public class CheckCartCommand implements Command {
 					return;
 				}
 			}
-			
+
 			if (userId != null) {
 				User user = null;
-				try {
-					user = userService.getUserById(userId);
-				} catch (ServiceException e) {
-					LOGGER.error("Failed receiving the user", e);
-				}
-				//List<Integer> idList = null;
-				
-				
-				for (int i = 0; i < shoppingCart.size(); i++) { // провер€ем,есть ли рецепт
-					
-					if (shoppingCart.get(i).getNeedRecipe() == 1) { 
-						List<Integer> recipeIdList = null;                
+
+				user = userService.getUserById(userId);
+
+				// List<Integer> idList = null;
+
+				for (int i = 0; i < shoppingCart.size(); i++) { // провер€ем,есть
+																// ли рецепт
+
+					if (shoppingCart.get(i).getNeedRecipe() == 1) {
+						List<Integer> recipeIdList = null;
 						Date endDate = new Date(System.currentTimeMillis());
-						try {
-							recipeIdList = recipeDetailService.getDrugsFromRecipeByUser(userId, endDate, shoppingCart.get(i).getId(), shoppingCart.get(i).getQuantity());
-						} catch (ServiceException e) {
-							LOGGER.error("Failed receiving the recipeIdList", e);
-						}
-						if(recipeIdList.isEmpty()) {
+
+						recipeIdList = recipeDetailService
+								.getDrugsFromRecipeByUser(userId, endDate,
+										shoppingCart.get(i).getId(),
+										shoppingCart.get(i).getQuantity());
+
+						if (recipeIdList.isEmpty()) {
 							ErrorBean errorBean = new ErrorBean("no recipe");
 							errors.add(errorBean);
 							session.setAttribute("has_errors", errors);
-							session.setAttribute("wrongId", shoppingCart.get(i).getId());
+							session.setAttribute("wrongId", shoppingCart.get(i)
+									.getId());
 							response.sendRedirect(prevURL);
 							return;
 						}
 						session.setAttribute("recipeId", recipeIdList.get(0));
 					}
 				}
-				
+
 				session.setAttribute("user", user);
 				response.sendRedirect("invoice.jsp");
-			}
-			else {
+			} else {
 				response.sendRedirect(prevURL);
 			}
 		} // if (buy != null)

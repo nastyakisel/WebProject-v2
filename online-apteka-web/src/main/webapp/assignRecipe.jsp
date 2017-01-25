@@ -18,6 +18,20 @@
 		<br />
 		<form method="post" action="controller.html" >
 		
+		<c:if test="${has_errors != null}">
+			<c:forEach items="${sessionScope.has_errors}" var="error">
+			<c:if test="${error.errorMessage == 'doctorPage.emptyField'}">
+						<c:set var="errorEmpty" value="doctorPage.emptyField" />
+						
+					</c:if>
+					</c:forEach>
+			</c:if>
+			<c:if test="${errorEmpty == 'doctorPage.emptyField'}">
+			<div class="errorText">
+							<fmt:message key="doctorPage.emptyField" bundle="${msgs}" />
+						</div>
+						</c:if>
+						
 			<input type="hidden" name="action" value="createRecipe" />
 			<input type="hidden" name="previousURI" value="${previousURI}" />
 			<fmt:message key="doctor.Client" bundle="${msgs}" />
@@ -59,6 +73,16 @@
 			<br />
 			<fmt:message key="doctor.Quantity" bundle="${msgs}" /> 
 			<br />
+			<c:if test="${has_errors != null}">
+				<c:forEach items="${sessionScope.has_errors}" var="error">
+				<c:if test="${error.errorMessage == 'goodQuantity.not.number'}">
+						<div class="errorText">
+							<fmt:message key="goodQuantity.not.number" bundle="${msgs}" />
+						</div>
+					</c:if>
+					</c:forEach>
+			</c:if>
+			
 			<input type="text" id="quantity" name="quantity" />
 				
 			<br />

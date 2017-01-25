@@ -1,17 +1,14 @@
 package com.finalproject.onlineapteka.command.impl;
 
-import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.finalproject.onlineapteka.bean.ErrorBean;
 import com.finalproject.onlineapteka.bean.Recipe;
@@ -21,15 +18,13 @@ import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.RecipeDetailService;
 import com.finalproject.onlineapteka.service.RecipeService;
 import com.finalproject.onlineapteka.service.UserService;
-import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
-public class CreateRecipeCommand implements Command {
-	private static final Logger LOGGER = LogManager
-			.getLogger(CreateRecipeCommand.class.getName());
+public class CreateRecipeCommand extends Command {
 
-	public void execute(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	public void handle(HttpServletRequest request,
+			HttpServletResponse response, String requestLocale)
+			throws Exception {
 
 		UserService userService = ServiceFactory.getInstance().getUserService();
 		RecipeService recipeService = ServiceFactory.getInstance()
@@ -39,22 +34,19 @@ public class CreateRecipeCommand implements Command {
 
 		HttpSession session = request.getSession();
 		String prevURI = request.getHeader("referer");
-		Integer userId = (Integer) session.getAttribute("userId");
 		String previousURI = request.getHeader("referer");
 		User doctor = (User) session.getAttribute("doctorUser");
-		User selectedUser =(User) session.getAttribute("selectedUser");
-		
+		User selectedUser = (User) session.getAttribute("selectedUser");
+
 		Integer recipeId = (Integer) session.getAttribute("recipeId");
 		List<String> inputList = new ArrayList<String>();
 		if (recipeId == null) {
 
 			Integer userIdForRecipe = Integer.parseInt(request
 					.getParameter("selectedUser"));
-			try {
-				selectedUser = userService.getUserById(userIdForRecipe);
-			} catch (ServiceException e) {
-				LOGGER.error("Failed receiving the user", e);
-			}
+
+			selectedUser = userService.getUserById(userIdForRecipe);
+
 			String beginDate = request.getParameter("begin_date");
 			String endDate = request.getParameter("end_date");
 			inputList.add(beginDate);
@@ -65,18 +57,15 @@ public class CreateRecipeCommand implements Command {
 				response.sendRedirect(prevURI);
 				return;
 			}
-			
+
 			Recipe recipe = new Recipe();
 			recipe.setDoctorName(doctor.getUserName());
 			recipe.setBeginDate(Date.valueOf(beginDate));
 			recipe.setEndDate(Date.valueOf(endDate));
 			recipe.setUserId(userIdForRecipe);
 
-			try {
-				recipeId = recipeService.addRecipe(recipe);
-			} catch (ServiceException e) {
-				LOGGER.error("Failed saving the recipe", e);
-			}
+			recipeId = recipeService.addRecipe(recipe);
+
 		}
 		String selectedDrugId = request.getParameter("selectedDrug");
 		String dosage = request.getParameter("dosage");
@@ -84,23 +73,27 @@ public class CreateRecipeCommand implements Command {
 		inputList.add(dosage);
 		inputList.add(quantity);
 		List<ErrorBean> errors = validateInput(inputList);
-		
+
 		if (!errors.isEmpty()) {
 			session.setAttribute("has_errors", errors);
 			response.sendRedirect(prevURI);
 			return;
-		}		
+		}
 		RecipeDetail recipeDetail = new RecipeDetail();
 		recipeDetail.setDosage(dosage);
+		if (!NumberUtils.isNumber(quantity)) {
+			ErrorBean notNumber = new ErrorBean("goodQuantity.not.number");
+			errors.add(notNumber);
+			session.setAttribute("has_errors", errors);
+			response.sendRedirect(prevURI);
+			return;
+		}
+
 		recipeDetail.setQuantity(Float.valueOf(quantity));
 		recipeDetail.setDrugId(Integer.parseInt(selectedDrugId));
 		recipeDetail.setRecipeId(recipeId);
 
-		try {
-			recipeDetailService.addRecipeDetail(recipeDetail);
-		} catch (ServiceException e) {
-			LOGGER.error("Failed saving the recipeDetail", e);
-		}
+		recipeDetailService.addRecipeDetail(recipeDetail);
 
 		session.setAttribute("recipeId", recipeId);
 		session.setAttribute("selectedUser", selectedUser);
@@ -108,15 +101,15 @@ public class CreateRecipeCommand implements Command {
 		response.sendRedirect("assignRecipe_2.jsp");
 
 	}
+
 	private List<ErrorBean> validateInput(List<String> inputList) {
 		List<ErrorBean> errors = new ArrayList<ErrorBean>();
 		for (int i = 0; i < inputList.size(); i++) {
 			if (inputList.get(i).isEmpty()) {
-				ErrorBean emptyInput = new ErrorBean();
+				ErrorBean emptyInput = new ErrorBean("doctorPage.emptyField");
 				errors.add(emptyInput);
 			}
 		}
-
 		return errors;
 	}
 }

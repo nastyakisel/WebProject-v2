@@ -9,10 +9,18 @@
 	<div class="registration">
 		<form method="post" action="controller.html" >
 		<c:if test="${has_errors != null}">
-						<span class="errorText">
-							<fmt:message key="addGood.errorMessage" bundle="${msgs}" />
-						</span>
+			<c:forEach items="${sessionScope.has_errors}" var="error">
+			<c:if test="${error.errorMessage == 'addGood.emptyField'}">
+						<c:set var="errorEmpty" value="addGood.emptyField" />
+						
+					</c:if>
+					</c:forEach>
 			</c:if>
+			<c:if test="${errorEmpty == 'addGood.emptyField'}">
+			<div class="errorText">
+							<fmt:message key="addGood.errorMessage" bundle="${msgs}" />
+						</div>
+						</c:if>
 			<br />
 			
 			<input type="hidden" name="action" value="addGood" />
@@ -34,9 +42,10 @@
 
 			<fmt:message key="admin.Description" bundle="${msgs}" />
 			<br />
-			<textarea name="good_descr" cols="40" value="<c:out value='${sessionScope.description}' default=''  />" rows="3"></textarea>
+			<textarea name="good_descr" cols="40" rows="3"><c:out value='${sessionScope.description}' default=''  /></textarea>
 			<br />
 			<br />
+			
 			
 			<fmt:message key="admin.Dosage" bundle="${msgs}" />
 			<br />
@@ -47,11 +56,20 @@
 			
 			<fmt:message key="admin.Instruction" bundle="${msgs}" />
 			<br />
-			<textarea name="instruction" value="<c:out value='${sessionScope.instruction}' default=''  />" cols="60" rows="7"></textarea>
+			<textarea name="instruction" cols="60" rows="7"><c:out value='${sessionScope.instruction}' default=''  /></textarea>
 				
 			<br />
 			<br />
 			
+			<c:if test="${has_errors != null}">
+				<c:forEach items="${sessionScope.has_errors}" var="error">
+				<c:if test="${error.errorMessage == 'goodPrice.not.number'}">
+						<div class="errorText">
+							<fmt:message key="goodPrice.not.number" bundle="${msgs}" />
+						</div>
+					</c:if>
+					</c:forEach>
+			</c:if>
 			<fmt:message key="admin.Price" bundle="${msgs}" />
 			<br />
 			<input type="text" id="price" name="price" value="<c:out value='${sessionScope.goodPrice}' default=''  />" />
@@ -59,6 +77,15 @@
 			<br />
 			<br />
 			
+			<c:if test="${has_errors != null}">
+				<c:forEach items="${sessionScope.has_errors}" var="error">
+				<c:if test="${error.errorMessage == 'goodQuantity.not.number'}">
+						<div class="errorText">
+							<fmt:message key="goodQuantity.not.number" bundle="${msgs}" />
+						</div>
+					</c:if>
+					</c:forEach>
+			</c:if>
 			<fmt:message key="admin.Quantity" bundle="${msgs}" /> 
 			<br />
 			<input type="text" id="quantity" name="quantity" value="<c:out value='${sessionScope.goodQuantity}' default=''  />" />
@@ -68,7 +95,11 @@
 			
 			<fmt:message key="admin.Recipe" bundle="${msgs}" /> 
 			<br />
-			<input type="text" id="recipe" name="recipe" value="<c:out value='${sessionScope.goodRecipe}' default=''  />" />
+			
+			<select name="recipe">
+  				<option>0</option>
+  				<option>1</option>
+				</select>
 				
 			<br />
 			<br />

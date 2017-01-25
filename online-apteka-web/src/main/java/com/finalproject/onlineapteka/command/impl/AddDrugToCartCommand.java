@@ -9,23 +9,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.finalproject.onlineapteka.bean.Drug;
-import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.CartService;
 import com.finalproject.onlineapteka.service.DrugService;
 import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
+import com.finalproject.onlineapteka.command.Command;
 
-public class AddDrugToCartCommand implements Command {
-	private static final Logger LOGGER = LogManager.getLogger(AddDrugToCartCommand.class.getName());
+public class AddDrugToCartCommand extends Command {
 	
-	public void execute(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	public void handle(HttpServletRequest request, HttpServletResponse response, String requestLocale)
+			throws Exception {
 		DrugService goodService = (DrugService) ServiceFactory.getInstance()
- 				.getGoodsService();
+ 				.getDrugService();
 		CartService cartService = ServiceFactory.getInstance()
  				.getCartService();
 		Integer drugId = Integer.parseInt(request.getParameter("drugId"));
@@ -33,10 +29,7 @@ public class AddDrugToCartCommand implements Command {
  		HttpSession session = request.getSession();
  		String previousURI = request.getHeader("referer");
  		Integer userId = (Integer) session.getAttribute("userId");
- 		String requestLocale = (String) session.getAttribute("requestLocale");
- 		if (requestLocale == null) {
-			requestLocale = "ru";
-		}
+ 		
  		List<Drug> shoppingCart = (List<Drug>) session
  								.getAttribute("shoppingCart");
  		
@@ -53,12 +46,9 @@ public class AddDrugToCartCommand implements Command {
  			}
  			
  			Drug drug = null;
-			try {
-				drug = goodService.getDrugById(drugId, requestLocale);
-				drug.setQuantity(1.00f);
- 			} catch (ServiceException e) {
- 				LOGGER.error("Failed receiving the drug", e);
- 			}
+			drug = goodService.getDrugById(drugId, requestLocale);
+			drug.setQuantity(1.00f);
+ 			
  			shoppingCart.add(drug);
  			
  			session.setAttribute("shoppingCart", shoppingCart);
@@ -66,23 +56,16 @@ public class AddDrugToCartCommand implements Command {
  		}
  		else {
  			List<Drug> drugList = null;
-			try {
+			
 				drugList = cartService.getDrugsFromCart(userId, requestLocale);
-			} catch (ServiceException e1) {
-				LOGGER.error("Failed receiving the drug", e1);
-			}
+			
 			Integer errorId = checkDrugInCart(drugList, userId, drugId);
 			if (errorId != null) {
  				session.setAttribute("has_errors", errorId);
  				response.sendRedirect(previousURI);
  				return;
  			}
- 			try {
  				cartService.addDrugToCart(drugId, userId);
- 			} catch (ServiceException e) {
- 				LOGGER.error("Failed adding to cart", e);
- 			}
- 			
 		}
  		response.sendRedirect(previousURI);
 	}

@@ -15,6 +15,9 @@ import com.finalproject.onlineapteka.service.exception.ServiceException;
 public class RecipeDetailServiceImpl implements RecipeDetailService{
 	@Override
 	public void addRecipeDetail(RecipeDetail recipeDetail) throws ServiceException {
+		if(recipeDetail == null) {
+			throw new ServiceException("Empty recipeDetail!");
+		}
 		RecipeDetailDao recipeDetailDao = DAOFactoryImpl.getInstance().getRecipeDetailDao();
 		
 		try {
@@ -26,6 +29,9 @@ public class RecipeDetailServiceImpl implements RecipeDetailService{
 	}
 	@Override
 	public List<Drug> getDrugsFromRecipe(Integer recipeId) throws ServiceException {
+		if(recipeId == null) {
+			throw new ServiceException("Empty recipeId!");
+		}
 		RecipeDetailDao recipeDetailDao = DAOFactoryImpl.getInstance().getRecipeDetailDao();
 		List<Drug> drugList = new ArrayList<>();
 
@@ -38,6 +44,18 @@ public class RecipeDetailServiceImpl implements RecipeDetailService{
 	}
 	@Override
 	public List<Integer> getDrugsFromRecipeByUser(Integer userId, Date endDate, Integer drugId, Float quantity) throws ServiceException {
+		if(userId == null) {
+			throw new ServiceException("Empty userId!");
+		}
+		if(endDate == null) {
+			throw new ServiceException("Empty endDate!");
+		}
+		if(drugId == null) {
+			throw new ServiceException("Empty drugId!");
+		}
+		if(quantity == null) {
+			throw new ServiceException("Empty quantity!");
+		}
 		RecipeDetailDao recipeDetailDao = DAOFactoryImpl.getInstance().getRecipeDetailDao();
 		List<Integer> recipeList = new ArrayList<>();
 

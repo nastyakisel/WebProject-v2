@@ -24,10 +24,10 @@ public class DrugServiceImpl implements DrugService {
 	}
 	@Override
 	public List<Drug> getAllDrugs(String locale) throws ServiceException {
-		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
 		if (locale.isEmpty()) {
 			throw new ServiceException("Empty locale!");
 		}
+		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
 		
 		List<Drug> drugList = null;
 
@@ -42,6 +42,9 @@ public class DrugServiceImpl implements DrugService {
 	@Override
 	public List<Drug> getGrugsByCategory(Integer categoryId)
 			throws ServiceException {
+		if (categoryId == null) {
+			throw new ServiceException("Empty categoryId!");
+		}
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
 		List<Drug> drugList = null;
 
@@ -56,7 +59,7 @@ public class DrugServiceImpl implements DrugService {
 	public List<Drug> getGrugsByCategory(Integer categoryId, String locale)
 			throws ServiceException {
 		if(categoryId == null) {
-			throw new ServiceException("Empty categoryName!");
+			throw new ServiceException("Empty categoryId!");
 		}
 		if(locale.equals(null)) {
 			throw new ServiceException("Empty locale!");
@@ -75,6 +78,9 @@ public class DrugServiceImpl implements DrugService {
 	@Override
 	public List<Drug> getDrugsByName(String drugName)
 			throws ServiceException {
+		if(drugName.isEmpty()) {
+			throw new ServiceException("Empty drugName!");
+		}
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
 		List<Drug> drugList = null;
 
@@ -86,33 +92,34 @@ public class DrugServiceImpl implements DrugService {
 		return drugList;
 	}
 	@Override
-	public Drug getDrugById(Integer id) throws ServiceException {
-		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		if(id == null) {
-			throw new ServiceException("Empty id!");
+	public Drug getDrugById(Integer drugId) throws ServiceException {
+		if(drugId == null) {
+			throw new ServiceException("Empty drugId!");
 		}
+		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
+		
 		Drug drug = null;
 
 		try {
-			drug = drugDao.loadDrugById(id);
+			drug = drugDao.loadDrugById(drugId);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
 		return drug;
 	}
 	@Override
-	public Drug getDrugById(Integer id, String locale) throws ServiceException {
+	public Drug getDrugById(Integer drugId, String locale) throws ServiceException {
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		if(id == null) {
-			throw new ServiceException("Empty id!");
+		if(drugId == null) {
+			throw new ServiceException("Empty drugId!");
 		}
-		if(locale.equals(null)) {
+		if(locale.isEmpty()) {
 			throw new ServiceException("Empty locale!");
 		}
 		Drug drug = null;
 
 		try {
-			drug = drugDao.loadDrugById(id, locale);
+			drug = drugDao.loadDrugById(drugId, locale);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
@@ -120,8 +127,11 @@ public class DrugServiceImpl implements DrugService {
 	}
 	@Override
 	public void addDrug(Drug drug) throws ServiceException {
+		if(drug == null) {
+			throw new ServiceException("Empty drug!");
+		}
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-
+		
 		try {
 			drugDao.saveDrug(drug);
 		} catch (DAOException e) {
@@ -130,6 +140,9 @@ public class DrugServiceImpl implements DrugService {
 	}
 	@Override
 	public void editDrug(Drug drug) throws ServiceException {
+		if(drug == null) {
+			throw new ServiceException("Empty drug!");
+		}
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
 
 		try {
@@ -154,6 +167,10 @@ public class DrugServiceImpl implements DrugService {
 	
 	@Override
 	public List<Drug> getDrugsByRecipe(Integer needRecipe) throws ServiceException {
+		if(needRecipe == null || needRecipe > 1) {
+			throw new ServiceException("Empty needRecipe!");
+		}
+		
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
 		List<Drug> drugList = null;
 

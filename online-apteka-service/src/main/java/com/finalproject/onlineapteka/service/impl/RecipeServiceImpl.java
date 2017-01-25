@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.finalproject.onlineapteka.bean.Recipe;
 import com.finalproject.onlineapteka.dao.RecipeDao;
-import com.finalproject.onlineapteka.dao.RecipeDetailDao;
 import com.finalproject.onlineapteka.dao.exception.DAOException;
 import com.finalproject.onlineapteka.dao.factories.DAOFactoryImpl;
 import com.finalproject.onlineapteka.service.RecipeService;
@@ -28,6 +27,9 @@ public class RecipeServiceImpl implements RecipeService{
 	
 	@Override
 	public Recipe getRecipeById(Integer recipeId) throws ServiceException {
+		if(recipeId == null) {
+			throw new ServiceException("Empty recipeId!");
+		}
 		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
 		Recipe recipe = null;
 
@@ -40,6 +42,9 @@ public class RecipeServiceImpl implements RecipeService{
 	}
 	@Override
 	public List<Recipe> getRecipesByUser(Integer userId) throws ServiceException {
+		if(userId == null) {
+			throw new ServiceException("Empty userId!");
+		}
 		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
 		List<Recipe> recipeList = new ArrayList<Recipe>();
 
@@ -52,6 +57,9 @@ public class RecipeServiceImpl implements RecipeService{
 	}
 	@Override
 	public Integer addRecipe(Recipe recipe) throws ServiceException {
+		if(recipe == null) {
+			throw new ServiceException("Empty recipe!");
+		}
 		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
 		Integer recipeId = null;
 		try {
@@ -64,6 +72,12 @@ public class RecipeServiceImpl implements RecipeService{
 	
 	@Override
 	public void updateRecipe(Date endDate, Integer recipeId) throws ServiceException {
+		if(endDate == null) {
+			throw new ServiceException("Empty endDate!");
+		}
+		if(recipeId == null) {
+			throw new ServiceException("Empty recipeId!");
+		}
 		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
 		
 		try {
