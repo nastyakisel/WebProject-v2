@@ -9,6 +9,6 @@ import com.finalproject.onlineapteka.dao.exception.DAOException;
 
 public interface RecipeDetailDao {
 	void saveRecipeDetail(RecipeDetail recipeDetail) throws DAOException;
-	List<Drug> loadDrugsFromRecipe(Integer recipeId) throws DAOException;
+	List<Drug> loadDrugsFromRecipe(Integer recipeId, String locale) throws DAOException;
 	List<Integer> loadDrugsByUserId(Integer userId, Date endDate, Integer drugId, Float quantity) throws DAOException;
 }

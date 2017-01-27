@@ -3,6 +3,8 @@ package com.finalproject.onlineapteka.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import com.finalproject.onlineapteka.bean.User;
 import com.finalproject.onlineapteka.dao.UserDao;
 import com.finalproject.onlineapteka.dao.exception.DAOException;
@@ -15,24 +17,26 @@ public class UserServiceImpl implements UserService {
 	private static final Integer USER_NOT_ADDED = 0;
 
 	@Override
-	public User getUser(String userName, String password)
+	public User getUser(char[] userName, char[] password)
 			throws ServiceException {
 		UserDao userDao = DAOFactoryImpl.getInstance().getUserDao();
 
-		if (userName.isEmpty()) {
+		if (userName.length == 0) {
 			throw new ServiceException("Empty name");
 		}
-		if (password.isEmpty()) {
+		if (password.length == 0) {
 			throw new ServiceException("Empty password");
 		}
 		User user = null;
+		String userNameCipher = DigestUtils.md5Hex(String.valueOf(userName));
 		try {
-			user = userDao.loadUser(userName);
+			user = userDao.loadUser(userNameCipher);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
 		if (user != null) {
-			if (user.getPassword().equals(password)) {
+			String userPasswordCipher = DigestUtils.md5Hex(String.valueOf(password));
+			if (user.getPassword().equals(userPasswordCipher)) {
 				return user;
 			}
 		}
@@ -42,20 +46,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Integer addUser(User user) throws ServiceException {
 		UserDao userDao = DAOFactoryImpl.getInstance().getUserDao();
-
-		if (user.getUserName().isEmpty()) {
-			throw new ServiceException("Empty login!");
+		if (user == null) {
+			throw new ServiceException("Empty user!");
 		}
-		if (user.getPassword().isEmpty()) {
-			throw new ServiceException("Empty password!");
-		}
-		if (user.getFirstName().isEmpty()) {
-			throw new ServiceException("Empty first name");
-		}
-		if (user.getSecondName().isEmpty()) {
-			throw new ServiceException("Empty second name");
-		}
-
+		
 		User receivedUser = null;
 		Integer userId = 0;
 		try {
@@ -67,6 +61,10 @@ public class UserServiceImpl implements UserService {
 			return USER_NOT_ADDED;
 		} else {
 			try {
+				String userNameCipher = DigestUtils.md5Hex(user.getUserName());
+				String userPasswordCipher = DigestUtils.md5Hex(user.getPassword());
+				user.setUserName(userNameCipher);
+				user.setPassword(userPasswordCipher);
 				userId = userDao.saveUser(user);
 			} catch (DAOException e) {
 				throw new ServiceException(e);
@@ -101,7 +99,7 @@ public class UserServiceImpl implements UserService {
 			throw new ServiceException("Empty userId");
 		}
 
-		List<User> userList = new ArrayList<User>();
+		List<User> userList = new ArrayList<>();
 		try {
 			userList = userDao.loadUsersByRole(role);
 		} catch (DAOException e) {

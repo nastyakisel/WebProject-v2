@@ -8,5 +8,5 @@ import com.finalproject.onlineapteka.dao.exception.DAOException;
 
 public interface OrderDetailDao {
 	void saveOrderDetail(OrderDetail orderDetail) throws DAOException;
-	List<Drug> loadDrugsFromOrderDetail(Integer orderId) throws DAOException;
+	List<Drug> loadDrugsFromOrderDetail(Integer orderId, String locale) throws DAOException;
 }

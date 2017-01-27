@@ -103,7 +103,7 @@ public class MakeOrderCommand extends Command {
 		List<Drug> drugsInOrder = new ArrayList<>();
 
 		drugsInOrder = orderDetailService
-				.getDrugsFromOrderDetail(customOrderId);
+				.getDrugsFromOrderDetail(customOrderId, requestLocale);
 
 		session.setAttribute("drugsInOrder", drugsInOrder);
 		session.setAttribute("customOrderId", customOrderId);

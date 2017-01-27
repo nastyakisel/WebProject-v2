@@ -12,4 +12,5 @@ public interface RecipeDao {
 	Recipe loadRecipeById(Integer recipeId) throws DAOException;
 	void alterRecipe(Date endDate, Integer drugId) throws DAOException;
 	List<Recipe> loadRecipesByUser(Integer userId) throws DAOException;
+	void alterRecipeRequest(Integer hasRequest, Date dateOfRequest, Integer recipeId) throws DAOException;
 }

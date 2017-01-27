@@ -1,6 +1,5 @@
 package com.finalproject.onlineapteka.command.impl;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ public class GetOrderDetailsCommand extends Command {
 		List<Drug> drugsInOrder = new ArrayList<>();
 
 		drugsInOrder = orderDetailService.getDrugsFromOrderDetail(Integer
-				.parseInt(customOrderId));
+				.parseInt(customOrderId), requestLocale);
 
 		session.setAttribute("drugsInCustomOrder", drugsInOrder);
 		session.setAttribute("customOrderId", customOrderId);

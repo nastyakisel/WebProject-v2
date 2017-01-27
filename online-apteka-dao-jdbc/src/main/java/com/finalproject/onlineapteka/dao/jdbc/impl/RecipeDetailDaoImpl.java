@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.RecipeDetail;
 import com.finalproject.onlineapteka.dao.DrugDao;
@@ -18,11 +21,14 @@ import com.finalproject.onlineapteka.dao.jdbc.impl.db.DbPool;
 
 public class RecipeDetailDaoImpl implements RecipeDetailDao {
 
+	private static final Logger LOGGER = LogManager.getLogger(RecipeDetailDaoImpl.class
+			.getName());
+	
 	private static final String INSERT_RECIPEDETAIL = "INSERT INTO recipedetail(dosage, quantity, FK_DRUG_TO_RECIPE, FK_Recipe_ID) VALUES (?,?,?,?)";
 
 	private static final String SELECT_DRUGS_BY_RECIPE_ID = "SELECT* FROM recipedetail WHERE FK_Recipe_ID=?";
 	
-	private static final String SELECT_DRUGS_BY_USER_ID = "SELECT FK_Recipe_ID FROM recipedetail WHERE FK_Recipe_ID in (SELECT ID FROM Recipe where FK_USER_TO_RECIPE = ? and END_DATE >= ? and FK_DRUG_TO_RECIPE=? and quantity >=?)";
+	private static final String SELECT_DRUGS_BY_USER_ID = "SELECT FK_Recipe_ID FROM recipedetail WHERE FK_Recipe_ID in (SELECT ID FROM recipe where FK_USER_TO_RECIPE = ? and END_DATE >= ? and FK_DRUG_TO_RECIPE=? and quantity >=?)";
 
 	@Override
 	public void saveRecipeDetail(RecipeDetail recipeDetail) throws DAOException {
@@ -38,12 +44,13 @@ public class RecipeDetailDaoImpl implements RecipeDetailDao {
 			statement.executeUpdate();
 
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while saving the recipe details", e);
 			throw new DAOException(e);
 		}
 	}
 
 	@Override
-	public List<Drug> loadDrugsFromRecipe(Integer recipeId) throws DAOException {
+	public List<Drug> loadDrugsFromRecipe(Integer recipeId, String locale) throws DAOException {
 
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
 		List<Drug> drugList = new ArrayList<>();
@@ -55,13 +62,14 @@ public class RecipeDetailDaoImpl implements RecipeDetailDao {
 
 				while (resultSet.next()) {
 					Drug drug = null;
-					drug = drugDao.loadDrugById(resultSet.getInt(3));
+					drug = drugDao.loadDrugById(resultSet.getInt(3), locale);
 					drug.setDosage(resultSet.getString(1));
 					drug.setQuantity(resultSet.getFloat(2));
 					drugList.add(drug);
 				}
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while loading the drugs from recipe", e);
 			throw new DAOException(e);
 		}
 		return drugList;
@@ -87,6 +95,7 @@ public class RecipeDetailDaoImpl implements RecipeDetailDao {
 				}
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while loading the drugs from recipe", e);
 			throw new DAOException(e);
 		}
 		return recipeList;

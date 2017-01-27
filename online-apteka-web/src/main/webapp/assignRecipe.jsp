@@ -11,7 +11,7 @@
 		<h2><fmt:message key="doctor.NewRecipe" bundle="${msgs}" /></h2>
 		<br />
 		<fmt:message key="doctor.Name" bundle="${msgs}" />
-   		<h2><c:out value="${doctorUser.userName}" /></h2>
+   		<h2><c:out value="${doctorUser.firstName} ${doctorUser.secondName}" /></h2>
    		<br />
    		<fmt:message key="doctor.Recipe.Id" bundle="${msgs}" />
 		<h2><c:out value="${recipeId}" /></h2>
@@ -37,7 +37,7 @@
 			<fmt:message key="doctor.Client" bundle="${msgs}" />
 			<br />
 			<c:if test="${selectedUser != null}">
- 				<c:out value="${selectedUser.userName}" />
+ 				<c:out value="${selectedUser.firstName} ${selectedUser.secondName}" />
  			</c:if>
  			
  			<c:if test="${selectedUser == null}">
@@ -46,7 +46,7 @@
  				
  				<c:forEach items="${sessionScope.clientList}" var="user">
  				
-				<option value="${user.id}"><c:out value="${user.userName}, ${user.id}" /></option>
+				<option value="${user.id}"><c:out value="${user.firstName}, ${user.secondName}, ${user.id}" /></option>
 				
 			</c:forEach>
 			</select>

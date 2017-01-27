@@ -1,6 +1,7 @@
 package com.finalproject.onlineapteka.command.impl;
 
 import java.sql.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -9,7 +10,7 @@ import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.RecipeService;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
-public class ProlongRecipeCommand extends Command {
+public class ProlongRecipeRequestCommand extends Command {
 
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
@@ -20,19 +21,18 @@ public class ProlongRecipeCommand extends Command {
 
 		HttpSession session = request.getSession();
 		String prevURI = request.getHeader("referer");
+		String recipeId = request.getParameter("recipeId");
 
-		String endDate = request.getParameter("new_end_date");
-		if (endDate.isEmpty()) {
+		recipeService.updateRecipeRequest(1,
+				new Date(System.currentTimeMillis()),
+				Integer.parseInt(recipeId));
+
+		Recipe recipe = recipeService.getRecipeById(Integer.parseInt(recipeId));
+		if (recipe.getHasRequest() != 1) {
+
 			response.sendRedirect(prevURI);
 			return;
 		}
-		Recipe recipe = (Recipe) session.getAttribute("recipe");
-		recipeService.updateRecipe(Date.valueOf(endDate), recipe.getId());
-		recipeService.updateRecipeRequest(0, null, recipe.getId());
-		recipe = recipeService.getRecipeById(recipe.getId());
-
-		session.setAttribute("recipe", recipe);
-		response.sendRedirect("recipeDetails.jsp");
-
+		response.sendRedirect("recipeRequestConformation.jsp");
 	}
 }

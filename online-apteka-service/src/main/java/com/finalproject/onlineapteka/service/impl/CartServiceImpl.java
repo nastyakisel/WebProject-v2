@@ -1,5 +1,6 @@
 package com.finalproject.onlineapteka.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.finalproject.onlineapteka.bean.Cart;
@@ -23,7 +24,7 @@ public class CartServiceImpl implements CartService{
 	@Override
 	public List<Drug> getDrugsFromCart(Integer userId) throws ServiceException {
 		CartDao cartDao = DAOFactoryImpl.getInstance().getCartDao();
-		List<Drug> drugList = null;
+		List<Drug> drugList = new ArrayList<>();
 		try {
 			drugList = cartDao.loadDrugsFromCart(userId);
 		} catch (DAOException e) {
@@ -34,7 +35,7 @@ public class CartServiceImpl implements CartService{
 	@Override
 	public List<Drug> getDrugsFromCart(Integer userId, String locale) throws ServiceException {
 		CartDao cartDao = DAOFactoryImpl.getInstance().getCartDao();
-		List<Drug> drugList = null;
+		List<Drug> drugList = new ArrayList<>();
 		try {
 			drugList = cartDao.loadDrugsFromCart(userId, locale);
 		} catch (DAOException e) {

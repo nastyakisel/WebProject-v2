@@ -17,7 +17,7 @@
     <fmt:message key="invoice.Client" bundle="${msgs}" />
    	
    	<fmt:message key="invoice.Client.Name" bundle="${msgs}" />
-   	<h2><c:out value="${user.userName}" /></h2>
+   	<h2><c:out value="${user.firstName}, ${user.secondName}" /></h2>
    	<form method="post" action="controller.html" >
    	<c:set var="sumTotal" value="${0}" />
    	<c:forEach items="${sessionScope.shoppingCart}" var="drug">

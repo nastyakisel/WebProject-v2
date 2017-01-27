@@ -41,7 +41,7 @@ public class GetRecipeDetailsCommand extends Command {
 		recipe = recipeService.getRecipeById(Integer.parseInt(recipeId));
 		userInRecipe = userService.getUserById(recipe.getUserId());
 		drugListInRecipe = recipeDetailService.getDrugsFromRecipe(Integer
-				.parseInt(recipeId));
+				.parseInt(recipeId), requestLocale);
 
 		session.setAttribute("recipe", recipe);
 		session.setAttribute("userInRecipe", userInRecipe);

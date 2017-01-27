@@ -24,9 +24,6 @@ public class BasicFilter implements Filter{
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		request.setCharacterEncoding("UTF-8");
-		System.out.println("Hallo Filter");
 		chain.doFilter(request, response);
-		
 	}
-
 }

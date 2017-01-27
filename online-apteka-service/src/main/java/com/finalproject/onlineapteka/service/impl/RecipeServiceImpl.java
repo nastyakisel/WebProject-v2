@@ -3,7 +3,6 @@ package com.finalproject.onlineapteka.service.impl;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.finalproject.onlineapteka.bean.Recipe;
 import com.finalproject.onlineapteka.dao.RecipeDao;
 import com.finalproject.onlineapteka.dao.exception.DAOException;
@@ -15,7 +14,7 @@ public class RecipeServiceImpl implements RecipeService{
 	@Override
 	public List<Recipe> getAllRecipes() throws ServiceException {
 		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
-		List<Recipe> recipeList = new ArrayList<Recipe>();
+		List<Recipe> recipeList = new ArrayList<>();
 
 		try {
 			recipeList = recipeDao.loadAllRecipes();
@@ -46,7 +45,7 @@ public class RecipeServiceImpl implements RecipeService{
 			throw new ServiceException("Empty userId!");
 		}
 		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
-		List<Recipe> recipeList = new ArrayList<Recipe>();
+		List<Recipe> recipeList = new ArrayList<>();
 
 		try {
 			recipeList = recipeDao.loadRecipesByUser(userId);
@@ -85,6 +84,15 @@ public class RecipeServiceImpl implements RecipeService{
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
+	}
+	@Override
+	public void updateRecipeRequest(Integer hasRequest, Date dateOfRequest, Integer recipeId) throws ServiceException {
+		RecipeDao recipeDao = DAOFactoryImpl.getInstance().getRecipeDao();
 		
+		try {
+			recipeDao.alterRecipeRequest(hasRequest, dateOfRequest, recipeId);;
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
 	}
 }

@@ -28,18 +28,13 @@ public class UrlFilter implements Filter{
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		
-		System.out.println("Hallo UrlFilter");
 		RequestDispatcher dispatcher = request
 				.getRequestDispatcher("start.jsp");
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		User doctorUser = (User) session.getAttribute("doctorUser");
 		if (doctorUser == null) {
 			dispatcher.forward(request, response);
-		}
-		
+		}	
 		chain.doFilter(request, response);
-		
 	}
-	
-
 }

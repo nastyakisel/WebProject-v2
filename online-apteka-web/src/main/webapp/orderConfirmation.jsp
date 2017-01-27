@@ -17,7 +17,7 @@
    
     <h2><fmt:message key="invoice.OrderConfirm" bundle="${msgs}" /></h2>
    <fmt:message key="invoice.Client.Name" bundle="${msgs}" />
-   	<h2><c:out value="${user.userName}" /></h2>
+   	<h2><c:out value="${user.firstName}, ${user.secondName}" /></h2>
    	<h2><fmt:message key="invoice.OrderNumber" bundle="${msgs}" /></h2>
    	<h2><c:out value="${customOrderId}" /></h2>
    	<c:forEach items="${sessionScope.drugsInOrder}" var="drug">

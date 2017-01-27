@@ -28,7 +28,7 @@ public class RecipeDetailServiceImpl implements RecipeDetailService{
 		
 	}
 	@Override
-	public List<Drug> getDrugsFromRecipe(Integer recipeId) throws ServiceException {
+	public List<Drug> getDrugsFromRecipe(Integer recipeId, String locale) throws ServiceException {
 		if(recipeId == null) {
 			throw new ServiceException("Empty recipeId!");
 		}
@@ -36,7 +36,7 @@ public class RecipeDetailServiceImpl implements RecipeDetailService{
 		List<Drug> drugList = new ArrayList<>();
 
 		try {
-			drugList = recipeDetailDao.loadDrugsFromRecipe(recipeId);
+			drugList = recipeDetailDao.loadDrugsFromRecipe(recipeId, locale);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}

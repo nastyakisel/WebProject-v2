@@ -3,10 +3,8 @@ package com.finalproject.onlineapteka.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.finalproject.onlineapteka.bean.CustomOrder;
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.OrderDetail;
-import com.finalproject.onlineapteka.dao.OrderDao;
 import com.finalproject.onlineapteka.dao.OrderDetailDao;
 import com.finalproject.onlineapteka.dao.exception.DAOException;
 import com.finalproject.onlineapteka.dao.factories.DAOFactoryImpl;
@@ -38,7 +36,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 		
 	}
 	@Override
-	public List<Drug> getDrugsFromOrderDetail(Integer orderId) throws ServiceException {
+	public List<Drug> getDrugsFromOrderDetail(Integer orderId, String locale) throws ServiceException {
 		OrderDetailDao orderDetailDao = DAOFactoryImpl.getInstance().getOrderDetailDao();
 
 		if (orderId == 0) {
@@ -47,10 +45,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 		
 		List<Drug> drugList = new ArrayList<Drug>();
 		try {
-			drugList = orderDetailDao.loadDrugsFromOrderDetail(orderId);
+			drugList = orderDetailDao.loadDrugsFromOrderDetail(orderId, locale);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
 		return drugList;
 	}
+	
 }

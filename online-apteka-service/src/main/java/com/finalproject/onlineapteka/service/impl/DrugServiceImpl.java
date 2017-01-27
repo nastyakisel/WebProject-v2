@@ -1,5 +1,6 @@
 package com.finalproject.onlineapteka.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.finalproject.onlineapteka.bean.Drug;
@@ -13,7 +14,7 @@ public class DrugServiceImpl implements DrugService {
 	@Override
 	public List<Drug> getAllDrugs() throws ServiceException {
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		List<Drug> drugList = null;
+		List<Drug> drugList = new ArrayList<>();
 
 		try {
 			drugList = drugDao.loadAllDrugs();
@@ -29,7 +30,7 @@ public class DrugServiceImpl implements DrugService {
 		}
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
 		
-		List<Drug> drugList = null;
+		List<Drug> drugList = new ArrayList<>();
 
 		try {
 			drugList = drugDao.loadAllDrugs(locale);
@@ -46,7 +47,7 @@ public class DrugServiceImpl implements DrugService {
 			throw new ServiceException("Empty categoryId!");
 		}
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		List<Drug> drugList = null;
+		List<Drug> drugList = new ArrayList<>();
 
 		try {
 			drugList = drugDao.loadDrugsByCategory(categoryId);
@@ -65,7 +66,7 @@ public class DrugServiceImpl implements DrugService {
 			throw new ServiceException("Empty locale!");
 		}
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		List<Drug> drugList = null;
+		List<Drug> drugList = new ArrayList<>();
 
 		try {
 			drugList = drugDao.loadDrugsByCategory(categoryId, locale);
@@ -82,10 +83,29 @@ public class DrugServiceImpl implements DrugService {
 			throw new ServiceException("Empty drugName!");
 		}
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		List<Drug> drugList = null;
+		List<Drug> drugList = new ArrayList<>();
 
 		try {
 			drugList = drugDao.loadDrugsByName(drugName);
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
+		return drugList;
+	}
+	@Override
+	public List<Drug> getDrugsByName(String drugName, String locale)
+			throws ServiceException {
+		if(drugName.isEmpty()) {
+			throw new ServiceException("Empty drugName!");
+		}
+		if(locale.isEmpty()) {
+			throw new ServiceException("Empty locale!");
+		}
+		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
+		List<Drug> drugList = new ArrayList<>();
+
+		try {
+			drugList = drugDao.loadDrugsByName(drugName, locale);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
@@ -126,14 +146,34 @@ public class DrugServiceImpl implements DrugService {
 		return drug;
 	}
 	@Override
-	public void addDrug(Drug drug) throws ServiceException {
+	public Integer addDrug(Drug drug) throws ServiceException {
 		if(drug == null) {
 			throw new ServiceException("Empty drug!");
 		}
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
+		Integer drugId = null;
+		try {
+			drugId = drugDao.saveDrug(drug);
+			return drugId;
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
+	}
+	@Override
+	public void addDrug(Drug drug, String locale, Integer drugId) throws ServiceException {
+		if(drug == null) {
+			throw new ServiceException("Empty drug!");
+		}
+		if(locale.isEmpty()) {
+			throw new ServiceException("Empty locale!");
+		}
+		if(drugId == null) {
+			throw new ServiceException("Empty drugId!");
+		}
+		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
 		
 		try {
-			drugDao.saveDrug(drug);
+			drugDao.saveDrug(drug, locale, drugId);;
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
@@ -147,6 +187,22 @@ public class DrugServiceImpl implements DrugService {
 
 		try {
 			drugDao.alterDrug(drug);;
+		} catch (DAOException e) {
+			throw new ServiceException(e);
+		}
+	}
+	@Override
+	public void editDrug(Drug drug, String locale) throws ServiceException {
+		if(drug == null) {
+			throw new ServiceException("Empty drug!");
+		}
+		if(locale.isEmpty()) {
+			throw new ServiceException("Empty locale!");
+		}
+		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
+
+		try {
+			drugDao.alterDrug(drug, locale);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}
@@ -166,16 +222,16 @@ public class DrugServiceImpl implements DrugService {
 	}
 	
 	@Override
-	public List<Drug> getDrugsByRecipe(Integer needRecipe) throws ServiceException {
+	public List<Drug> getDrugsByRecipe(Integer needRecipe, String locale) throws ServiceException {
 		if(needRecipe == null || needRecipe > 1) {
 			throw new ServiceException("Empty needRecipe!");
 		}
 		
 		DrugDao drugDao = DAOFactoryImpl.getInstance().getGrugDao();
-		List<Drug> drugList = null;
+		List<Drug> drugList = new ArrayList<>();
 
 		try {
-			drugList = drugDao.loadDrugsByRecipe(needRecipe);
+			drugList = drugDao.loadDrugsByRecipe(needRecipe, locale);
 		} catch (DAOException e) {
 			throw new ServiceException(e);
 		}

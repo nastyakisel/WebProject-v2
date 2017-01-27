@@ -8,5 +8,5 @@ import com.finalproject.onlineapteka.service.exception.ServiceException;
 
 public interface OrderDetailService {
 	void addOrderDetail(OrderDetail orderDetail) throws ServiceException;
-	List<Drug> getDrugsFromOrderDetail(Integer orderId) throws ServiceException;
+	List<Drug> getDrugsFromOrderDetail(Integer orderId, String locale) throws ServiceException;
 }

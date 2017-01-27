@@ -2,11 +2,9 @@ package com.finalproject.onlineapteka.command.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.User;
 import com.finalproject.onlineapteka.command.Command;
@@ -40,7 +38,7 @@ public class AssignRecipeCommand extends Command {
 				.getDrugService();
 		List<Drug> drugListWhithRecipe = new ArrayList<Drug>();
 		
-		drugListWhithRecipe = goodsService.getDrugsByRecipe(1);
+		drugListWhithRecipe = goodsService.getDrugsByRecipe(1, requestLocale);
 		
 		session.setAttribute("drugListWhithRecipe", drugListWhithRecipe);
 		session.setAttribute("clientList", clientList);

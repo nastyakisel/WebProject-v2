@@ -11,6 +11,14 @@ public class Recipe implements Serializable {
 	private Date beginDate;
 	private Date endDate;
 	private Integer userId;
+	private Integer hasRequest;
+	
+	public Integer getHasRequest() {
+		return hasRequest;
+	}
+	public void setHasRequest(Integer hasRequest) {
+		this.hasRequest = hasRequest;
+	}
 	public Integer getId() {
 		return id;
 	}

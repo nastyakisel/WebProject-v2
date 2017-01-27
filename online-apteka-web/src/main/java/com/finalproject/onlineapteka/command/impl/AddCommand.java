@@ -1,12 +1,8 @@
 package com.finalproject.onlineapteka.command.impl;
 
-import java.io.IOException;
-
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import com.finalproject.onlineapteka.command.Command;
 
 public class AddCommand extends Command {
@@ -14,6 +10,9 @@ public class AddCommand extends Command {
 			throws Exception {
 		
 		RequestDispatcher dispatcher;
+		String addById = request.getParameter("byId");
+		
+		request.setAttribute("addById", addById);
 		
 		String previousURI = request.getHeader("referer");
 		request.setAttribute("previousURI", previousURI);

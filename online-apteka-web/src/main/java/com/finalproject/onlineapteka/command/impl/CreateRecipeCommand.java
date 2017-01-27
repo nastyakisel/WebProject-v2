@@ -19,6 +19,7 @@ import com.finalproject.onlineapteka.service.RecipeDetailService;
 import com.finalproject.onlineapteka.service.RecipeService;
 import com.finalproject.onlineapteka.service.UserService;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
+import com.finalproject.onlineapteka.utils.ValidationUtils;
 
 public class CreateRecipeCommand extends Command {
 
@@ -51,7 +52,7 @@ public class CreateRecipeCommand extends Command {
 			String endDate = request.getParameter("end_date");
 			inputList.add(beginDate);
 			inputList.add(endDate);
-			List<ErrorBean> errors = validateInput(inputList);
+			List<ErrorBean> errors = ValidationUtils.validateInput(inputList);
 			if (!errors.isEmpty()) {
 				session.setAttribute("has_errors", errors);
 				response.sendRedirect(prevURI);
@@ -59,7 +60,7 @@ public class CreateRecipeCommand extends Command {
 			}
 
 			Recipe recipe = new Recipe();
-			recipe.setDoctorName(doctor.getUserName());
+			recipe.setDoctorName(doctor.getFirstName() + " " + doctor.getSecondName());
 			recipe.setBeginDate(Date.valueOf(beginDate));
 			recipe.setEndDate(Date.valueOf(endDate));
 			recipe.setUserId(userIdForRecipe);
@@ -72,7 +73,7 @@ public class CreateRecipeCommand extends Command {
 		String quantity = request.getParameter("quantity");
 		inputList.add(dosage);
 		inputList.add(quantity);
-		List<ErrorBean> errors = validateInput(inputList);
+		List<ErrorBean> errors = ValidationUtils.validateInput(inputList);
 
 		if (!errors.isEmpty()) {
 			session.setAttribute("has_errors", errors);
@@ -102,14 +103,4 @@ public class CreateRecipeCommand extends Command {
 
 	}
 
-	private List<ErrorBean> validateInput(List<String> inputList) {
-		List<ErrorBean> errors = new ArrayList<ErrorBean>();
-		for (int i = 0; i < inputList.size(); i++) {
-			if (inputList.get(i).isEmpty()) {
-				ErrorBean emptyInput = new ErrorBean("doctorPage.emptyField");
-				errors.add(emptyInput);
-			}
-		}
-		return errors;
-	}
 }

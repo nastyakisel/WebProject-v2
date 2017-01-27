@@ -19,7 +19,7 @@
 		
 			<fmt:message key="doctor.Client" bundle="${msgs}" />
 			<br />
- 			<c:out value="${userInRecipe.userName}, ${userInRecipe.id}" />
+ 			<c:out value="${userInRecipe.firstName}, ${userInRecipe.secondName}, ${userInRecipe.id}" />
  			
 			<br />
 			<br />
@@ -48,13 +48,18 @@
 			<br />
 			<br />
 			<form method="post" action="controller.html">
- 				<input type="hidden" name="action" value="recipeDetails" />
+ 				<input type="hidden" name="action" value="prolongRecipeRequest" />
  				<input type="hidden" name="recipeId" value="${recipe.id}" />
- 				<input type="submit" name="addRecipe_but" value="<fmt:message key="doctor.Prolong" bundle="${msgs}" />" onclick="this.value='Скрипт сработал'"  />
+ 				<input type="submit" name="addRecipe_but" value="<fmt:message key="doctor.prolong.user" bundle="${msgs}" />" onclick="this.value='Скрипт сработал'"  />
  				<!-- <input type="button" value="Перейти в корзину" onClick='location.href="cart.jsp"'>-->
  			</form>
 			
 	</div>
-	
+	<br />
+	<br />
+	<br />
+	<br />
+	<%@ include file="footer.jsp" %>
 </body>
+
 </html>

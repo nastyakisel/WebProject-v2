@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService{
 		if (userId == 0) {
 			throw new ServiceException("Empty date");
 		}
-		List<CustomOrder> customOrderList = new ArrayList<CustomOrder>();
+		List<CustomOrder> customOrderList = new ArrayList<>();
 		
 		try {
 			customOrderList = orderDao.loadOrdersByUserId(userId);

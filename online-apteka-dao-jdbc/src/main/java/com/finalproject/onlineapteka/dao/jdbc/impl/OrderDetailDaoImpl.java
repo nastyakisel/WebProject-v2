@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.OrderDetail;
@@ -17,6 +19,8 @@ import com.finalproject.onlineapteka.dao.factories.DAOFactoryImpl;
 import com.finalproject.onlineapteka.dao.jdbc.impl.db.DbPool;
 
 public class OrderDetailDaoImpl implements OrderDetailDao {
+	private static final Logger LOGGER = LogManager.getLogger(OrderDetailDaoImpl.class
+			.getName());
 	private static final String INSERT_ORDERDETAIL = "INSERT INTO orderdetail(quantity, totalprice, FK_DRUG_TO_ORDER, FK_CUSTOMORDER_ID) VALUES (?,?,?,?)";
 
 	private static final String SELECT_DRUGS_FROM_ORDER = "SELECT* FROM orderdetail WHERE FK_CUSTOMORDER_ID=?";
@@ -36,12 +40,13 @@ public class OrderDetailDaoImpl implements OrderDetailDao {
 			statement.executeUpdate();
 
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while saving the order details", e);
 			throw new DAOException(e);
 		}
 	}
 
 	@Override
-	public List<Drug> loadDrugsFromOrderDetail(Integer orderId)
+	public List<Drug> loadDrugsFromOrderDetail(Integer orderId, String locale)
 			throws DAOException {
 
 		List<Drug> drugList = new ArrayList<Drug>();
@@ -55,7 +60,7 @@ public class OrderDetailDaoImpl implements OrderDetailDao {
 
 				while (resultSet.next()) {
 					Drug drug = null;
-					drug = goodsDao.loadDrugById(resultSet.getInt(4));
+					drug = goodsDao.loadDrugById(resultSet.getInt(4), locale);
 					drug.setPrice(resultSet.getBigDecimal(3));
 					drug.setQuantity(resultSet.getFloat(2));
 
@@ -63,6 +68,7 @@ public class OrderDetailDaoImpl implements OrderDetailDao {
 				}
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while loading the order details", e);
 			throw new DAOException(e);
 		}
 		return drugList;

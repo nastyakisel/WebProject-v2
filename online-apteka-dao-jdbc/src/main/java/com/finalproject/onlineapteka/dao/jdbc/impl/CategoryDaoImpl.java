@@ -15,7 +15,7 @@ import com.finalproject.onlineapteka.dao.CategoryDao;
 import com.finalproject.onlineapteka.dao.exception.DAOException;
 import com.finalproject.onlineapteka.dao.jdbc.impl.db.DbPool;
 
-public class CategoryDaoImpl extends BaseDao implements CategoryDao {
+public class CategoryDaoImpl implements CategoryDao {
 
 	private static final String SELECT_ALL_CATEGORIES = "SELECT* FROM category";
 

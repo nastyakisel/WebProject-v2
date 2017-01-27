@@ -14,7 +14,7 @@
    	<h2><fmt:message key="order" bundle="${msgs}" /></h2>
    	<h2><c:out value="${session_Id}" /></h2>
    	<fmt:message key="order.clientName" bundle="${msgs}" />
-   	<h2><c:out value="${user.userName}" /></h2>
+   	<h2><c:out value="${user.firstName}, ${user.secondName}" /></h2>
    	<h2><fmt:message key="order.id" bundle="${msgs}" /></h2>
    	<h2><c:out value="${customOrderId}" /></h2>
    	<c:forEach items="${sessionScope.drugsInCustomOrder}" var="drug">

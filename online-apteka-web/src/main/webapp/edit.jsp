@@ -12,13 +12,13 @@
 		<form method="post" action="controller.html" >
 		<c:if test="${has_errors != null}">
 			<c:forEach items="${sessionScope.has_errors}" var="error">
-			<c:if test="${error.errorMessage == 'addGood.emptyField'}">
+			<c:if test="${error.errorMessage == 'emptyField'}">
 						<c:set var="errorEmpty" value="addGood.emptyField" />
 						
 					</c:if>
 					</c:forEach>
 			</c:if>
-			<c:if test="${errorEmpty == 'addGood.emptyField'}">
+			<c:if test="${errorEmpty == 'emptyField'}">
 			<div class="errorText">
 							<fmt:message key="addGood.errorMessage" bundle="${msgs}" />
 						</div>

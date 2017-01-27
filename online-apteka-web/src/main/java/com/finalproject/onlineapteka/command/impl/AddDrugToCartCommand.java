@@ -1,10 +1,8 @@
 package com.finalproject.onlineapteka.command.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -12,7 +10,6 @@ import javax.servlet.http.HttpSession;
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.service.CartService;
 import com.finalproject.onlineapteka.service.DrugService;
-import com.finalproject.onlineapteka.service.exception.ServiceException;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 import com.finalproject.onlineapteka.command.Command;
 

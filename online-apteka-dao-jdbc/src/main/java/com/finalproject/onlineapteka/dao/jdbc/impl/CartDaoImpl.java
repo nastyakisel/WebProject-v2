@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.finalproject.onlineapteka.bean.Cart;
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.dao.CartDao;
@@ -17,6 +20,9 @@ import com.finalproject.onlineapteka.dao.jdbc.impl.db.DbPool;
 
 public class CartDaoImpl implements CartDao {
 
+	private static final Logger LOGGER = LogManager.getLogger(CartDaoImpl.class
+			.getName());
+	
 	private static final String INSERT_GOOD_TO_CART = "INSERT INTO cart(QUANTITY, FK_DRUG_TO_CART, "
 			+ "FK_USER_TO_CART) VALUES (?,?,?)";
 
@@ -42,6 +48,7 @@ public class CartDaoImpl implements CartDao {
 			statement.executeUpdate();
 
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while saving the drugs", e);
 			throw new DAOException(e);
 		}
 	}
@@ -66,6 +73,7 @@ public class CartDaoImpl implements CartDao {
 				}
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while loading the drugs", e);
 			throw new DAOException(e);
 		}
 		return drugList;
@@ -94,6 +102,7 @@ public class CartDaoImpl implements CartDao {
 				}
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while loading the drugs", e);
 			throw new DAOException(e);
 		}
 		return drugList;
@@ -112,6 +121,7 @@ public class CartDaoImpl implements CartDao {
 			statement.executeUpdate();
 
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while deleting the drugs from cart", e);
 			throw new DAOException(e);
 		} 
 	}
@@ -127,6 +137,7 @@ public class CartDaoImpl implements CartDao {
 			statement.executeUpdate();
 
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while deleting the cart", e);
 			throw new DAOException(e);
 		} 
 	}
@@ -143,6 +154,7 @@ public class CartDaoImpl implements CartDao {
 			statement.executeUpdate();
 
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while updating the cart", e);
 			throw new DAOException(e);
 		} 
 	}

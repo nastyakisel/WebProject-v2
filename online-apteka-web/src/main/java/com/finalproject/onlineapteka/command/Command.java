@@ -2,6 +2,7 @@ package com.finalproject.onlineapteka.command;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +25,10 @@ public abstract class Command {
 		try {
 			handle(request, response, requestLocale);
 		} catch (Exception e) {
+			String message = e.getMessage();
+			request.setAttribute("errorMessage", message);
+			RequestDispatcher dispatcher = request.getRequestDispatcher("errorPage.jsp"); 
+			dispatcher.forward(request, response); 
 			LOGGER.error("Failed to implement the method handle", e);
 		}
 	}

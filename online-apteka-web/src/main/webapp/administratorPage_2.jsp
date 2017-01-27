@@ -15,12 +15,18 @@
 					<br />
   <table width="98%" border="0" cellspacing="1">
   	<!--  <button><a href = "addGood.jsp" >Добавить</a></button>-->
-  	
-  	<form method="post" action="controller.html?action=add" >
+  	<tr><td>
+  	<form method="post" action="controller.html?action=add&byId=no" >
   		
   		<input type="submit" name="addGood_but" value="<fmt:message key="admin.Add" bundle="${msgs}" />" />
   	</form> 
-  <br>
+  <br> </td>
+  <td>
+  <form method="post" action="controller.html?action=add&byId=yes" >
+  		
+  		<input type="submit" name="addGood_but" value="<fmt:message key="admin.AddById" bundle="${msgs}" />" />
+  	</form> 
+  <br></td></tr>
   
   	<c:forEach items="${drug_List}" var="drug">
     	<tr>

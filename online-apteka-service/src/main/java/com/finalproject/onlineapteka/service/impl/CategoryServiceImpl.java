@@ -1,5 +1,6 @@
 package com.finalproject.onlineapteka.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.finalproject.onlineapteka.bean.Category;
@@ -13,7 +14,7 @@ public class CategoryServiceImpl implements CategoryService{
 	@Override
 	public List<Category> getAllCategories() throws ServiceException {
 		CategoryDao categoryDao = DAOFactoryImpl.getInstance().getCategoryDao();
-		List<Category> categoryList = null;
+		List<Category> categoryList = new ArrayList<>();
 		try {
 			categoryList = categoryDao.loadAllCategories();
 		} catch (DAOException e) {
@@ -24,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService{
 	@Override
 	public List<Category> getAllCategories(String locale) throws ServiceException {
 		CategoryDao categoryDao = DAOFactoryImpl.getInstance().getCategoryDao();
-		List<Category> categoryList = null;
+		List<Category> categoryList = new ArrayList<>();
 		try {
 			categoryList = categoryDao.loadAllCategories(locale);
 		} catch (DAOException e) {

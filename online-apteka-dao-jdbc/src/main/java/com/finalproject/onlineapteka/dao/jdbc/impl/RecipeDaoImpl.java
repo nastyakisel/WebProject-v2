@@ -9,6 +9,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.finalproject.onlineapteka.bean.Recipe;
 import com.finalproject.onlineapteka.dao.RecipeDao;
 import com.finalproject.onlineapteka.dao.exception.DAOException;
@@ -16,6 +19,8 @@ import com.finalproject.onlineapteka.dao.jdbc.impl.db.DbPool;
 
 public class RecipeDaoImpl implements RecipeDao {
 
+	private static final Logger LOGGER = LogManager.getLogger(RecipeDaoImpl.class
+			.getName());
 	private static final String SELECT_ALL_RECIPES = "SELECT* FROM recipe";
 
 	private static final String SELECT_RECIPE_BY_ID = "SELECT* FROM recipe WHERE id=?";
@@ -25,6 +30,8 @@ public class RecipeDaoImpl implements RecipeDao {
 	private static final String INSERT_RECIPE = "INSERT INTO recipe(DOCTOR_NAME, BEGIN_DATE, END_DATE, FK_USER_TO_RECIPE) VALUES (?,?,?,?)";
 
 	private static final String UPDATE_RECIPE = "UPDATE recipe SET END_DATE=? WHERE id=?";
+	
+	private static final String UPDATE_RECIPE_REQUEST = "UPDATE recipe SET HAS_REQUEST_TO_PROLONG=?, DATE_OF_REQUEST=? WHERE id=?";
 
 	@Override
 	public List<Recipe> loadAllRecipes() throws DAOException {
@@ -44,11 +51,13 @@ public class RecipeDaoImpl implements RecipeDao {
 					recipe.setBeginDate(resultSet.getDate(3));
 					recipe.setEndDate(resultSet.getDate(4));
 					recipe.setUserId(resultSet.getInt(5));
+					recipe.setHasRequest(resultSet.getInt(6));
 
 					recipeList.add(recipe);
 				}
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while loading the recipe", e);
 			throw new DAOException(e);
 		}
 		return recipeList;
@@ -71,9 +80,11 @@ public class RecipeDaoImpl implements RecipeDao {
 					recipe.setBeginDate(resultSet.getDate(3));
 					recipe.setEndDate(resultSet.getDate(4));
 					recipe.setUserId(resultSet.getInt(5));
+					recipe.setHasRequest(resultSet.getInt(6));
 				}
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while loading the recipe", e);
 			throw new DAOException(e);
 		}
 		return recipe;
@@ -101,6 +112,7 @@ public class RecipeDaoImpl implements RecipeDao {
 				}
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while loading the recipe", e);
 			throw new DAOException(e);
 		}
 		return recipeList;
@@ -112,9 +124,7 @@ public class RecipeDaoImpl implements RecipeDao {
 		try (Connection connection = DbPool.getPool().getConnection();
 				PreparedStatement statement = connection.prepareStatement(
 						INSERT_RECIPE, Statement.RETURN_GENERATED_KEYS)) {
-
 			statement.setString(1, recipe.getDoctorName());
-
 			statement.setDate(2, recipe.getBeginDate(),
 					java.util.Calendar.getInstance());
 			statement.setDate(3, recipe.getEndDate(),
@@ -127,9 +137,9 @@ public class RecipeDaoImpl implements RecipeDao {
 				resultSet.next();
 
 				return resultSet.getInt(1);
-
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while saving the recipe", e);
 			throw new DAOException(e);
 		}
 	}
@@ -145,6 +155,23 @@ public class RecipeDaoImpl implements RecipeDao {
 
 			statement.executeUpdate();
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while altering the recipe", e);
+			throw new DAOException(e);
+		} 
+	}
+	@Override
+	public void alterRecipeRequest(Integer hasRequest, Date dateOfRequest, Integer recipeId) throws DAOException {
+		try (Connection connection = DbPool.getPool().getConnection();
+				PreparedStatement statement = connection
+						.prepareStatement(UPDATE_RECIPE_REQUEST)) {
+
+			statement.setInt(1, hasRequest);
+			statement.setDate(2, dateOfRequest, java.util.Calendar.getInstance());
+			statement.setInt(3, recipeId);
+
+			statement.executeUpdate();
+		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while altering the recipe", e);
 			throw new DAOException(e);
 		} 
 	}

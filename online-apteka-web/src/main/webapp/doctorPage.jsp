@@ -11,7 +11,7 @@
    	<h2><fmt:message key="doctor.Recipes" bundle="${msgs}" /></h2>
    	
    	<fmt:message key="doctor.Name" bundle="${msgs}" />
-   	<h2><c:out value="${doctorUser.userName}" /></h2>
+   	<h2><c:out value="${doctorUser.firstName} ${doctorUser.secondName}" /></h2>
   	<tr>
   	<form method="post" action="controller.html">
  				<input type="hidden" name="action" value="assignRecipe" />
@@ -32,6 +32,11 @@
 			</td>
 			<td><c:out value = "${recipe.userId}"/></td>
 			<td><c:out value = "${recipe.beginDate} - ${recipe.endDate}"/></td>
+			<td>
+			<c:if test="${recipe.hasRequest == '1'}">
+				<button type="button"><fmt:message key="doctor.recipes.has.request" bundle="${msgs}" /></button>
+			</c:if>
+			</td>
 			<td>
 			<form method="post" action="controller.html">
  				<input type="hidden" name="action" value="recipeDetails" />

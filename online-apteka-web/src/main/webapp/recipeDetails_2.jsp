@@ -12,13 +12,13 @@
 		<br />
 		<br />
 		<fmt:message key="doctor.Name" bundle="${msgs}" />
-   		<h2><c:out value="${doctorUser.userName}" /></h2>
+   		<h2><c:out value="${doctorUser.firstName} ${doctorUser.secondName}" /></h2>
    		<fmt:message key="doctor.Recipe.Id" bundle="${msgs}" />
 		<h2><c:out value="${recipe.id}" /></h2>
 		
 			<fmt:message key="doctor.Client" bundle="${msgs}" />
 			<br />
- 			<c:out value="${userInRecipe.userName}, ${userInRecipe.id}" />
+ 			<c:out value="${userInRecipe.firstName}, ${userInRecipe.secondName}, ${userInRecipe.id}" />
  			
 			<br />
 			<br />

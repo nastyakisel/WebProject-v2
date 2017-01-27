@@ -1,9 +1,9 @@
 package com.finalproject.onlineapteka.command.impl;
 
 import java.util.List;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.DrugService;
@@ -16,18 +16,18 @@ public class SearchDrugsCommand extends Command {
 			throws Exception {
 
 		String drugName = request.getParameter("search");
+		if(drugName.isEmpty()) {
+			response.sendRedirect("start.jsp");
+			return;
+		}
 		List<Drug> drugList = null;
 		DrugService drugService = (DrugService) ServiceFactory.getInstance()
 				.getDrugService();
 
-		drugList = drugService.getDrugsByName(drugName);
+		drugList = drugService.getDrugsByName(drugName, requestLocale);
+		HttpSession session = request.getSession();
+		session.setAttribute("drug_List", drugList);
 
-		request.setAttribute("drug_List", drugList);
-
-		Command categoryCommand = new GetCategoriesCommand();
-		categoryCommand.execute(request, response);
-		RequestDispatcher dispatcher = request
-				.getRequestDispatcher("start.jsp");
-		dispatcher.forward(request, response);
+		response.sendRedirect("start.jsp");	
 	}
 }

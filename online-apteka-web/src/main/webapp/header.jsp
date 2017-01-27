@@ -88,7 +88,7 @@
 				<input type="hidden" name="locale" value="${sessionScope.requestLocale}" />
 				<div class='input_form'>
 					<label><fmt:message key="loginPage.userName.label" bundle="${msgs}" /></label>
-    				<input type='text' id='user_login' name='user_login'>
+    				<input type='text' id='user_login' name='user_login' value = "${sessionScope.current_user}">
   					</div>
   				<div class='input_form'>
     				<label><fmt:message key="loginPage.password.label" bundle="${msgs}" /></label>

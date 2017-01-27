@@ -9,11 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.math.NumberUtils;
+
 import com.finalproject.onlineapteka.bean.Drug;
 import com.finalproject.onlineapteka.bean.ErrorBean;
 import com.finalproject.onlineapteka.command.Command;
 import com.finalproject.onlineapteka.service.DrugService;
 import com.finalproject.onlineapteka.service.factory.ServiceFactory;
+import com.finalproject.onlineapteka.utils.ValidationUtils;
 
 public class EditDrugCommand extends Command {
 
@@ -46,7 +48,7 @@ public class EditDrugCommand extends Command {
 		String goodCategoryId = request.getParameter("cat_id");
 		inputList.add(goodCategoryId);
 
-		List<ErrorBean> errors = validateInput(inputList);
+		List<ErrorBean> errors = ValidationUtils.validateInput(inputList);
 
 		session.setAttribute("has_errors", null);
 		if (!errors.isEmpty()) {
@@ -84,20 +86,11 @@ public class EditDrugCommand extends Command {
 					.getDrugService();
 
 			service.editDrug(drug);
+			service.editDrug(drug, requestLocale);
 
 			String previousURL = request.getParameter("previousURI");
 			response.sendRedirect(previousURL);
 		}
 	}
 
-	private List<ErrorBean> validateInput(List<String> inputList) {
-		List<ErrorBean> errors = new ArrayList<ErrorBean>();
-		for (int i = 0; i < inputList.size(); i++) {
-			if (inputList.get(i).isEmpty()) {
-				ErrorBean emptyInput = new ErrorBean("addGood.emptyField");
-				errors.add(emptyInput);
-			}
-		}
-		return errors;
-	}
 }

@@ -8,6 +8,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.finalproject.onlineapteka.bean.CustomOrder;
 import com.finalproject.onlineapteka.dao.OrderDao;
 import com.finalproject.onlineapteka.dao.exception.DAOException;
@@ -15,6 +18,9 @@ import com.finalproject.onlineapteka.dao.jdbc.impl.db.DbPool;
 
 public class OrderDaoImpl implements OrderDao {
 
+	private static final Logger LOGGER = LogManager.getLogger(OrderDaoImpl.class
+			.getName());
+	
 	private static final String INSERT_ORDER = "INSERT INTO customorder(ORDER_DATE, totalprice, ORDER_STATUS, FK_USER_TO_ORDER) VALUES (?,?,?,?)";
 
 	private static final String SELECT_ORDER_BY_USERID = "SELECT* FROM customorder WHERE FK_USER_TO_ORDER=?";
@@ -39,9 +45,9 @@ public class OrderDaoImpl implements OrderDao {
 				resultSet.next();
 
 				return resultSet.getInt(1);
-
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while saving the order", e);
 			throw new DAOException(e);
 		}
 	}
@@ -70,6 +76,7 @@ public class OrderDaoImpl implements OrderDao {
 				}
 			}
 		} catch (InterruptedException | SQLException e) {
+			LOGGER.error("Error occurs while loading the order", e);
 			throw new DAOException(e);
 		}
 		return customOrderList;
