@@ -21,20 +21,21 @@ import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class MakeOrderCommand extends Command {
 
+	OrderService orderService = (OrderService) ServiceFactory.getInstance()
+			.getOrderService();
+	OrderDetailService orderDetailService = (OrderDetailService) ServiceFactory
+			.getInstance().getOrderDetailService();
+	CartService cartService = (CartService) ServiceFactory.getInstance()
+			.getCartService();
+	DrugService drugService = (DrugService) ServiceFactory.getInstance()
+			.getDrugService();
+	RecipeService recipeService = ServiceFactory.getInstance()
+			.getRecipeService();
+	
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
 			throws Exception {
-		OrderService orderService = (OrderService) ServiceFactory.getInstance()
-				.getOrderService();
-		OrderDetailService orderDetailService = (OrderDetailService) ServiceFactory
-				.getInstance().getOrderDetailService();
-		CartService cartService = (CartService) ServiceFactory.getInstance()
-				.getCartService();
-		DrugService drugService = (DrugService) ServiceFactory.getInstance()
-				.getDrugService();
-		RecipeService recipeService = ServiceFactory.getInstance()
-				.getRecipeService();
-
+		
 		HttpSession session = request.getSession();
 		String prevURL = request.getHeader("referer");
 
@@ -61,9 +62,7 @@ public class MakeOrderCommand extends Command {
 			OrderDetail orderDetail = new OrderDetail();
 			orderDetail.setDrugId(shoppingCart.get(i).getId());
 			Float quantity = shoppingCart.get(i).getQuantity();
-			Drug drug = null;
-
-			drug = drugService.getDrugById(shoppingCart.get(i).getId(),
+			Drug drug = drugService.getDrugById(shoppingCart.get(i).getId(),
 					requestLocale);
 
 			if (quantity > drug.getQuantity()) {
@@ -100,9 +99,7 @@ public class MakeOrderCommand extends Command {
 			recipeService.updateRecipe(endDate, recipeId);
 		}
 
-		List<Drug> drugsInOrder = new ArrayList<>();
-
-		drugsInOrder = orderDetailService
+		List<Drug> drugsInOrder = orderDetailService
 				.getDrugsFromOrderDetail(customOrderId, requestLocale);
 
 		session.setAttribute("drugsInOrder", drugsInOrder);

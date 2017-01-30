@@ -8,14 +8,13 @@ import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class DeleteDrugCommand extends Command {
 	
+	DrugService drugService = (DrugService) ServiceFactory.getInstance()
+			.getDrugService();
 	public void handle(HttpServletRequest request, HttpServletResponse response, String requestLocale)
 			throws Exception {
 
-		Integer drugId = Integer.parseInt(request.getParameter("drugId"));
+		Integer drugId = getParameterFromRequestAsInteger("drugId", request);
 		
-		DrugService drugService = (DrugService) ServiceFactory.getInstance()
-				.getDrugService();
-
 		drugService.removeDrug(drugId);
 		
 		Command getAllGoods = new AdminCommand();

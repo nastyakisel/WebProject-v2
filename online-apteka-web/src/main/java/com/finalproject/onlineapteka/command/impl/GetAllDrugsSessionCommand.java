@@ -14,24 +14,20 @@ import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class GetAllDrugsSessionCommand extends Command {
 
+	DrugService goodsService = (DrugService) ServiceFactory.getInstance()
+			.getDrugService();
+	CategoryService categoryService = ServiceFactory.getInstance()
+			.getCategoryService();
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
 			throws Exception {
 
 		HttpSession session = request.getSession();
 
-		List<Drug> drugList = null;
-		List<Category> categoryList = null;
-		DrugService goodsService = (DrugService) ServiceFactory.getInstance()
-				.getDrugService();
-		CategoryService categoryService = ServiceFactory.getInstance()
-				.getCategoryService();
-
-		drugList = goodsService.getAllDrugs(requestLocale);
-		categoryList = categoryService.getAllCategories(requestLocale);
+		List<Drug> drugList = goodsService.getAllDrugs(requestLocale);
+		List<Category> categoryList = categoryService.getAllCategories(requestLocale);
 
 		session.setAttribute("drug_List", drugList);
 		session.setAttribute("category_List", categoryList);
-
 	}
 }

@@ -1,6 +1,5 @@
 package com.finalproject.onlineapteka.command.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,10 +13,12 @@ import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class AssignRecipeCommand extends Command {
 	
+	UserService userService = ServiceFactory.getInstance().getUserService();
+	DrugService drugService = (DrugService) ServiceFactory.getInstance()
+			.getDrugService();
+	
 	public void handle(HttpServletRequest request, HttpServletResponse response, String requestLocale)
 			throws Exception {
-
-		UserService userService = ServiceFactory.getInstance().getUserService();
 
 		HttpSession session = request.getSession();
 
@@ -31,14 +32,9 @@ public class AssignRecipeCommand extends Command {
 			session.setAttribute("selectedUser", null);
 		}
 		
-		List<User> clientList = new ArrayList<User>();
-		clientList = userService.getUsersByRole(1);
+		List<User> clientList = userService.getUsersByRole(1);
 
-		DrugService goodsService = (DrugService) ServiceFactory.getInstance()
-				.getDrugService();
-		List<Drug> drugListWhithRecipe = new ArrayList<Drug>();
-		
-		drugListWhithRecipe = goodsService.getDrugsByRecipe(1, requestLocale);
+		List<Drug> drugListWhithRecipe = drugService.getDrugsByRecipe(1, requestLocale);
 		
 		session.setAttribute("drugListWhithRecipe", drugListWhithRecipe);
 		session.setAttribute("clientList", clientList);

@@ -1,6 +1,5 @@
 package com.finalproject.onlineapteka.command.impl;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -12,7 +11,6 @@ public class LogOutCommand extends Command {
 		
 		HttpSession session = request.getSession();
 		session.invalidate();
-		RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-		dispatcher.forward(request, response);
+		forward("index.jsp", request, response);
 	}
 }

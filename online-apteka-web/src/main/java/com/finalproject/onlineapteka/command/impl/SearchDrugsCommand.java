@@ -11,23 +11,27 @@ import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class SearchDrugsCommand extends Command {
 
+	DrugService drugService = (DrugService) ServiceFactory.getInstance()
+			.getDrugService();
+	
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
 			throws Exception {
 
+		HttpSession session = request.getSession();
 		String drugName = request.getParameter("search");
+		
 		if(drugName.isEmpty()) {
-			response.sendRedirect("start.jsp");
+			session.setAttribute("drug_List", null);
+			response.sendRedirect("searchResults.jsp");
 			return;
 		}
-		List<Drug> drugList = null;
-		DrugService drugService = (DrugService) ServiceFactory.getInstance()
-				.getDrugService();
-
-		drugList = drugService.getDrugsByName(drugName, requestLocale);
-		HttpSession session = request.getSession();
+		session.setAttribute("drug_List", null);
+		
+		List<Drug> drugList = drugService.getDrugsByName(drugName, requestLocale);
+		
 		session.setAttribute("drug_List", drugList);
-
-		response.sendRedirect("start.jsp");	
+		
+		response.sendRedirect("searchResults.jsp");	
 	}
 }

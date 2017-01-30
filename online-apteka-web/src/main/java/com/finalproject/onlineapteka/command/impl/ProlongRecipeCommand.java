@@ -11,12 +11,12 @@ import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class ProlongRecipeCommand extends Command {
 
+	RecipeService recipeService = ServiceFactory.getInstance()
+			.getRecipeService();
+	
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
 			throws Exception {
-
-		RecipeService recipeService = ServiceFactory.getInstance()
-				.getRecipeService();
 
 		HttpSession session = request.getSession();
 		String prevURI = request.getHeader("referer");

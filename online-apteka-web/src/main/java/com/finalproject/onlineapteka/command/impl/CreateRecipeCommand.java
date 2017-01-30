@@ -23,28 +23,26 @@ import com.finalproject.onlineapteka.utils.ValidationUtils;
 
 public class CreateRecipeCommand extends Command {
 
+	UserService userService = ServiceFactory.getInstance().getUserService();
+	RecipeService recipeService = ServiceFactory.getInstance()
+			.getRecipeService();
+	RecipeDetailService recipeDetailService = ServiceFactory.getInstance()
+			.getRecipeDetailService();
+	
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
 			throws Exception {
 
-		UserService userService = ServiceFactory.getInstance().getUserService();
-		RecipeService recipeService = ServiceFactory.getInstance()
-				.getRecipeService();
-		RecipeDetailService recipeDetailService = ServiceFactory.getInstance()
-				.getRecipeDetailService();
-
 		HttpSession session = request.getSession();
 		String prevURI = request.getHeader("referer");
-		String previousURI = request.getHeader("referer");
 		User doctor = (User) session.getAttribute("doctorUser");
 		User selectedUser = (User) session.getAttribute("selectedUser");
 
 		Integer recipeId = (Integer) session.getAttribute("recipeId");
 		List<String> inputList = new ArrayList<String>();
-		if (recipeId == null) {
+		if (!isResipeCreated(recipeId)) {
 
-			Integer userIdForRecipe = Integer.parseInt(request
-					.getParameter("selectedUser"));
+			Integer userIdForRecipe = getParameterFromRequestAsInteger("selectedUser", request);
 
 			selectedUser = userService.getUserById(userIdForRecipe);
 
@@ -98,9 +96,14 @@ public class CreateRecipeCommand extends Command {
 
 		session.setAttribute("recipeId", recipeId);
 		session.setAttribute("selectedUser", selectedUser);
-		session.setAttribute("previousURI", previousURI);
+		session.setAttribute("previousURI", prevURI);
 		response.sendRedirect("assignRecipe_2.jsp");
 
 	}
-
+	private boolean isResipeCreated(Integer recipeId) {
+		if (recipeId == null) {
+			return false;
+		}
+		return true;
+	}
 }

@@ -20,6 +20,9 @@ import com.finalproject.onlineapteka.utils.ValidationUtils;
 
 public class LoginCommand extends Command {
 
+	UserService userService = ServiceFactory.getInstance().getUserService();
+	CartService cartService = ServiceFactory.getInstance().getCartService();
+	
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
 			throws Exception {
@@ -39,10 +42,7 @@ public class LoginCommand extends Command {
 			return;
 		}
 		
-		UserService userService = ServiceFactory.getInstance().getUserService();
-		User receivedUser = null;
-
-		receivedUser = userService.getUser(userName.toCharArray(), password.toCharArray());
+		User receivedUser = userService.getUser(userName.toCharArray(), password.toCharArray());
 
 		ErrorBean userError = validateUser(receivedUser);
 
@@ -59,11 +59,9 @@ public class LoginCommand extends Command {
 		List<Drug> shoppingCart = (List<Drug>) session  
 				.getAttribute("shoppingCart");
 
-		CartService cartService = ServiceFactory.getInstance().getCartService();
 		if (shoppingCart != null) {
-			List<Drug> drugList = null;
-
-			drugList = cartService.getDrugsFromCart(receivedUser.getId(),
+			
+			List<Drug> drugList = cartService.getDrugsFromCart(receivedUser.getId(),
 					requestLocale);
 
 			metka: for (int i = 0; i < shoppingCart.size(); i++) {

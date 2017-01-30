@@ -3,7 +3,6 @@ package com.finalproject.onlineapteka.command.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -17,6 +16,8 @@ import com.finalproject.onlineapteka.utils.ValidationUtils;
 
 public class RegistrationCommand extends Command {
 
+	UserService userService = ServiceFactory.getInstance().getUserService();
+	
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
 			throws Exception {
@@ -49,10 +50,7 @@ public class RegistrationCommand extends Command {
 		user.setFirstName(firstName);
 		user.setSecondName(secondName);
 
-		Integer userId = null;
-		UserService addService = ServiceFactory.getInstance().getUserService();
-
-		userId = addService.addUser(user);
+		Integer userId = userService.addUser(user);
 
 		session.setAttribute("reg_error", null);
 		if (userId == 0) {

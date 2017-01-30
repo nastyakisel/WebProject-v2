@@ -19,6 +19,8 @@ import com.finalproject.onlineapteka.utils.ValidationUtils;
 
 public class AddDrugCommand extends Command {
 
+	DrugService drugService = (DrugService) ServiceFactory.getInstance()
+			.getDrugService();
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
 			throws Exception {
@@ -63,9 +65,6 @@ public class AddDrugCommand extends Command {
 		session.setAttribute("goodCategoryId", goodCategoryId);
 		inputList.add(goodCategoryId);
 
-		String drug_Id = request.getParameter("drug_id");
-		session.setAttribute("drug_id", drug_Id);
-
 		List<ErrorBean> errors = ValidationUtils.validateInput(inputList);
 		session.setAttribute("has_errors", null);
 
@@ -108,14 +107,12 @@ public class AddDrugCommand extends Command {
 		}
 		drug.setCategoryId(Integer.parseInt(goodCategoryId));
 
-		DrugService service = (DrugService) ServiceFactory.getInstance()
-				.getDrugService();
-
-		if (drug_Id.isEmpty()) {
-			Integer drugId = null;
-
-			drugId = service.addDrug(drug);
-			service.addDrug(drug, requestLocale, drugId);
+		String drug_Id = request.getParameter("drug_id");
+		session.setAttribute("drug_id", drug_Id);
+		
+		if (drug_Id == null) {
+			Integer drugId = drugService.addDrug(drug);
+			drugService.addDrug(drug, requestLocale, drugId);
 		}
 		else {
 			Drug drugLocale = new Drug();
@@ -123,10 +120,9 @@ public class AddDrugCommand extends Command {
 			drugLocale.setDescription(description);
 			drugLocale.setDosage(goodDosage);
 			drugLocale.setInstruction(instruction);
-			service.addDrug(drugLocale, requestLocale, Integer.parseInt(drug_Id));
+			drugService.addDrug(drugLocale, requestLocale, Integer.parseInt(drug_Id));
 		}
 		String previousURL = request.getParameter("previousURI");
 		response.sendRedirect(previousURL);
 	}
-
 }

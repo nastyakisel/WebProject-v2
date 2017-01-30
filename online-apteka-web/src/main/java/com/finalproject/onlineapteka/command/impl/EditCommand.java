@@ -1,7 +1,5 @@
 package com.finalproject.onlineapteka.command.impl;
 
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.finalproject.onlineapteka.bean.Drug;
@@ -11,21 +9,19 @@ import com.finalproject.onlineapteka.service.factory.ServiceFactory;
 
 public class EditCommand extends Command {
 
+	DrugService drugService = (DrugService) ServiceFactory.getInstance()
+			.getDrugService();
+	
 	public void handle(HttpServletRequest request,
 			HttpServletResponse response, String requestLocale)
 			throws Exception {
 
-		Integer goodId = Integer.parseInt(request.getParameter("drugId"));
-		Drug recievedDrug = null;
-		DrugService service = (DrugService) ServiceFactory.getInstance()
-				.getDrugService();
-
-		recievedDrug = service.getDrugById(goodId, requestLocale);
+		Integer drugId = getParameterFromRequestAsInteger("drugId", request);
+		Drug recievedDrug = drugService.getDrugById(drugId, requestLocale);
 
 		String previousURI = request.getHeader("referer");
 		request.setAttribute("previousURI", previousURI);
 		request.setAttribute("drug", recievedDrug);
-		RequestDispatcher dispatcher = request.getRequestDispatcher("edit.jsp");
-		dispatcher.forward(request, response);
+		forward("edit.jsp", request, response);
 	}
 }
