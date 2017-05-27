@@ -1,100 +1,81 @@
 package com.finalproject.onlineapteka.dao.jdbc.impl.db;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Properties;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class DbPool {
-	private static final String URL = "jdbc:mysql://localhost:3306/online_apteka?serverTimezone=UTC";
-	private static final String USER = "root";
-	private static final String PASSWORD = "root";
 
-	private BlockingQueue<Connection> connectionList;
+	private static final Logger LOGGER = LogManager
+				.getLogger(DbPool.class.getName());
+		private static final int POOLSIZE = 8;
+		private BlockingQueue<Connection> takenConnections;
+		private Properties properties;
+		private String url;
+		private String user;
+		private String password;
+		private String driver;
 
-	private static DbPool pool = null;
+		private static DbPool pool = null;
 
-	public static DbPool getPool() {
-		if (pool == null) {
-			try {
-				pool = new DbPool();
-			} catch (ClassNotFoundException | SQLException e) {
-				throw new RuntimeException(e);
+		public synchronized static DbPool getPool() {
+			if (pool == null) {
+				try {
+					pool = new DbPool();
+				} catch (Exception e) {
+					throw new RuntimeException("The pool is not created", e);
+				}
 			}
+			return pool;
 		}
-		return pool;
-	}
 
-	private DbPool() throws ClassNotFoundException, SQLException {
-		Class.forName("com.mysql.jdbc.Driver");
-		connectionList = new ArrayBlockingQueue<Connection>(8);
-	}
-
-	public Connection getConnection() throws SQLException, InterruptedException {
-		Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-		connectionList.add(connection);
-		return connectionList.take();
-	}
-
-	public void closeDbResources(Connection connection) {
-		closeDbResources(connection, null);
-	}
-
-	public void closeDbResources(Connection connection, Statement statement) {
-		closeDbResources(connection, statement, null);
-	}
-
-	public void closeDbResources(Connection connection, Statement statement,
-			ResultSet resultSet) {
-		closeResultSet(resultSet);
-		closeStatement(statement);
-		closeConnection(connection);
-	}
-	public void closeDbResources(Connection connection, PreparedStatement statement,
-			ResultSet resultSet) {
-		closeResultSet(resultSet);
-		closePreparedStatement(statement);
-		closeConnection(connection);
-	}
-
-	public void closeConnection(Connection connection) {
-		if (connection != null) {
+		private Properties getProperties() {
+			Properties property = new Properties();
 			try {
-				connection.close();
-				connectionList.put(connection);
-				connectionList.remove(connection);
-			} catch (SQLException | InterruptedException e) {
+				InputStream stream = getClass().getClassLoader()
+						.getResourceAsStream("dbConfig.properties");
+				property.load(stream);
+			} catch (IOException e) {
+				throw new RuntimeException("The properties file is not founded ", e);
 			}
+			return property;
 		}
-	}
 
-	public void closeStatement(Statement statement) {
-		if (statement != null) {
-			try {
-				statement.close();
-			} catch (SQLException e) {
-			}
+		private DbPool() {
+			takenConnections = new ArrayBlockingQueue<Connection>(POOLSIZE);
+			properties = getProperties();
+			url = properties.getProperty("jdbc.url");
+			user = properties.getProperty("jdbc.user");
+			password = properties.getProperty("jdbc.password");
+			driver = properties.getProperty("jdbc.driver");
 		}
-	}
-	public void closePreparedStatement(PreparedStatement statement) {
-		if (statement != null) {
-			try {
-				statement.close();
-			} catch (SQLException e) {
-			}
-		}
-	}
 
-	public void closeResultSet(ResultSet resultSet) {
-		if (resultSet != null) {
+		public Connection getConnection() throws SQLException,
+				InterruptedException, ClassNotFoundException {
+			Class.forName(driver);
+			Connection connection = DriverManager
+					.getConnection(url, user, password);
+			removeConnection();
 			try {
-				resultSet.close();
-			} catch (SQLException e) {
+				takenConnections.add(connection);
+			} catch (IllegalStateException e) {
+				LOGGER.info("Waiting for connection");
 			}
+			return connection;
 		}
+
+		private void removeConnection() throws SQLException  {
+			if (takenConnections.remainingCapacity() == 0) {
+				for (Connection connection : takenConnections) {
+					if (connection.isClosed()) {
+						takenConnections.remove(connection);
+						break;
+					}
+				}
+			}
 	}
-}
